@@ -27,19 +27,6 @@
 
 
 <body>
-    <div class="pre-loader">
-        <div class="pre-loader-box">
-            <div class="loader-logo">
-                <img src="{{ asset('back/vendors/images/deskapp-logo.svg') }}" alt="" />
-            </div>
-            <div class="loader-progress" id="progress_div">
-                <div class="bar" id="bar1"></div>
-            </div>
-            <div class="percent" id="percent1">0%</div>
-            <div class="loading-text">Loading...</div>
-        </div>
-    </div>
-
     <div class="header">
         <div class="header-left">
             <div class="menu-icon bi bi-list"></div>
@@ -175,7 +162,13 @@
                         <a class="dropdown-item" href="profile.html"><i class="dw dw-user1"></i> Profile</a>
                         <a class="dropdown-item" href="profile.html"><i class="dw dw-settings2"></i> Setting</a>
                         <a class="dropdown-item" href="faq.html"><i class="dw dw-help"></i> Help</a>
-                        <a class="dropdown-item" href="login.html"><i class="dw dw-logout"></i> Log Out</a>
+                        <a class="dropdown-item" href="{{ route('admin.logout') }}"
+                            onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i
+                                class="dw dw-logout"></i> Log Out
+                        </a>
+                        <form action="{{ route('admin.logout') }}" id="logout-form" method="post">
+                            @csrf
+                        </form>
                     </div>
                 </div>
             </div>

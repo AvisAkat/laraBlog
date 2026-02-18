@@ -6,23 +6,31 @@
         <div class="login-title">
             <h2 class="text-center text-primary">Login</h2>
         </div>
-        <form>
+        <form action="{{ route('admin.login_handler') }}" method="POST">
             <x-form-alerts></x-form-alerts>
             @csrf
 
-            <div class="input-group custom mb-1">
-                <input type="text" class="form-control form-control-lg" placeholder="Username" />
+            <div class="input-group custom mb-1"> 
+                <input type="text" class="form-control form-control-lg" placeholder="Username / Email"  name="login_id" value="{{ old('login_id') }}"/>
                 <div class="input-group-append custom">
                     <span class="input-group-text"><i class="icon-copy dw dw-user1"></i></span>
                 </div>
             </div>
-            <div class="input-group custom">
-                <input type="password" class="form-control form-control-lg" placeholder="**********" />
+            @error('login_id')
+                <span class="text-danger ml-1">{{ $message }}</span>
+            @enderror
+
+            <div class="input-group custom mb-1 mt-2">
+                <input type="password" class="form-control form-control-lg" placeholder="**********" name="password"/>
                 <div class="input-group-append custom">
                     <span class="input-group-text"><i class="dw dw-padlock1"></i></span>
                 </div>
             </div>
-            <div class="row pb-30">
+            @error('password')
+                <span class="text-danger ml-1">{{ $message }}</span>
+            @enderror
+
+            <div class="row pb-30 mt-2">
                 <div class="col-6">
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="customCheck1" />
@@ -31,7 +39,7 @@
                 </div>
                 <div class="col-6">
                     <div class="forgot-password">
-                        <a href="forgot-password.html">Forgot Password</a>
+                        <a href="{{ route('admin.forgot') }}">Forgot Password</a>
                     </div>
                 </div>
             </div>

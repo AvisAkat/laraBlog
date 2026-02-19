@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -116,37 +117,114 @@ class AuthController extends Controller
                     'token' => $token,
                     'created_at' => Carbon::now(),
                 ]);
-        }else{
-            //Add new reset password token
+        } else {
+            // Add new reset password token
             DB::table('password_reset_tokens')
-            ->insert([
-                'email' => $user->email,
-                'token'=> $token,
-                'created_at' => Carbon::now()
-            ]);
+                ->insert([
+                    'email' => $user->email,
+                    'token' => $token,
+                    'created_at' => Carbon::now(),
+                ]);
         }
 
-        //create clickable action link
-        $actionLink = route('admin.reset_password_form',['token' => $token]);
+        // create clickable action link
+        $actionLink = route('admin.reset_password_form', ['token' => $token]);
 
-        $data = array(
+        $data = [
             'actionlink' => $actionLink,
-            'user' => $user
-        );
+            'user' => $user,
+        ];
 
         $mail_body = view('email-templates.forget-template', $data)->render();
 
-        $mailConfig = array(
+        $mailConfig = [
             'recipent_address' => $user->email,
             'recipent_name' => $user->name,
             'subject' => 'Reset Password',
-            'body' => $mail_body
-        );
+            'body' => $mail_body,
+        ];
 
         if (CMail::send($mailConfig)) {
-            return redirect()->route('admin.forgot')->with('success','We have e-mailed your password reset link.');
-        }else{
-            return redirect()->route('admin.forgot')->with('fail','Something went wrong. Ressetting password link not sent. Try again later.');
+            return redirect()->route('admin.forgot')->with('success', 'We have e-mailed your password reset link.');
+        } else {
+            return redirect()->route('admin.forgot')->with('fail', 'Something went wrong. Ressetting password link not sent. Try again later.');
+        }
+
+    }
+
+    public function resetForm(Request $request, $token = null)
+    {
+        // check if this token exists
+        $isTokenExists = DB::table('password_reset_tokens')
+            ->where('token', $token)
+            ->first();
+
+        if (! $isTokenExists) {
+            return redirect()->route('admin.forgot')->with('fail', 'Invalid token. Request another reset password link.');
+        } else {
+           //check if token is not expired (15 minutes)
+            $diffMins = Carbon::createFromFormat('Y-m-d H:i:s', $isTokenExists->created_at)->diffInMinutes(Carbon::now());
+
+            if($diffMins > 15) {
+                return redirect()->route('admin.forgot')->with('fail', 'Token expired. Request another reset password link.');
+            }
+            $data = [
+                'pageTitle' => 'Reset Password',
+                'token' => $token,
+            ];
+
+            return view('back.pages.auth.reset', $data);
+        }
+    }
+
+    public function resetPasswordHandler(Request $request)
+    {
+        // valiate the form
+        $request->validate([
+            'new_password' => 'required|min:5|required_with:new_password_confirmation|same:new_password_confirmation',
+            'new_password_confirmation' => 'required',
+        ]);
+
+        $dbToken = DB::table('password_reset_tokens')
+            ->where('token', $request->token)
+            ->first();
+
+        // Get User details
+        $user = User::where('email', $dbToken->email)->first();
+
+        // update password
+        User::where('email', $user->email)
+            ->update([
+                'password' => Hash::make($request->new_password),
+            ]);
+
+        // send notification email to teh user email address that contains the new password
+        $data = [
+            'user' => $user,
+            'new_password' => $request->new_password,
+        ];
+
+        $mail_body = view('email-templates.password-changes-template', $data);
+
+        $mailConfig = [
+            'recipent_address' => $user->email,
+            'recipent_name' => $user->name,
+            'subject' => 'Reset Password',
+            'body' => $mail_body,
+        ];
+
+        if (CMail::send($mailConfig)) {
+            // Delete the token from DB
+            DB::table('password_reset_tokens')
+                ->where([
+                    'email' => $dbToken->email,
+                    'token' => $dbToken->token,
+                ])
+                ->delete();
+
+            return redirect()->route('admin.login')->with('success', 'Done!, Your password has been changed successfully. Use your new password to login into the systtem');
+        } else {
+            return redirect()->route('admin.reset_password_form', ['token' => $dbToken->token])->with('fail', 'Something went wrong. Try again later.');
         }
 
     }

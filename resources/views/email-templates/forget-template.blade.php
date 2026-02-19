@@ -49,7 +49,7 @@
 
                             <p>
                                 If you did not request a password reset, you can safely ignore this email. This link
-                                will expire in 30 minutes.
+                                will expire in 15 minutes.
                             </p>
 
                             <p style="margin-bottom:0;">

@@ -2,16 +2,68 @@
 
 use Livewire\Component;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 new class extends Component {
 
-    public $user;
+    protected $listeners = ['refreshUserInfo' => '$refresh'];
+    public $user; //Displaying user info
+
+    //for tabs to remain at their current position even after refreshing
+    public $tab = null;
+    public $tabname = 'personal_details';
+    protected $queryString = ['tab' => ['keep' => true]];
+
+    //
+    public $name, $email, $username, $bio;
+
+    //Tab function
+    public function selectTab($tab)
+    {
+        $this->tab = $tab;
+    }
+
+    public function updatePersonalDetails()
+    {
+        $user = User::findOrFail(auth()->id());
+
+        $this->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,'.$user->id,
+            'bio' => 'nullable|string|max:500',
+        ]);
+
+        //Update user details
+        $user->name = $this->name;
+        $user->username = $this->username;
+        $user->bio = $this->bio;
+        $updated =$user->save();
+
+        sleep(1); 
+
+        if($updated) {
+            $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Personal details updated successfully!']);
+            $this->dispatch('refreshUserInfo'); // Refresh user info in the top bar
+        }else {
+            $this->dispatch('showAlert', ['type' => 'error', 'message' => 'Failed to update personal details. Please try again.']);
+        } 
+
+    }
+        
 
     public function mount()
     {
         $this->user = auth()->user();
+        $this->tab = Request('tab') ? Request('tab') : $this->tabname;
+
+        //Populate Colums
+        $user_info = User::findOrFail(auth()->id());
+        $this->name = $user_info->name;
+        $this->email = $user_info->email;
+        $this->username = $user_info->username;
+        $this->bio = $user_info->bio;
     }
-    
+
 };
 
 
@@ -95,30 +147,80 @@ new class extends Component {
                     <div class="tab height-100-p">
                         <ul class="nav nav-tabs customtab" role="tablist">
                             <li class="nav-item">
-                                <a wire:click="SelectTab('personal_details')" {{ $tab == 'personal_details' ? 'active' : '' }}  class="nav-link active" data-toggle="tab" href="#personal_details"
-                                    role="tab">Personal details</a>
+                                <a wire:click="selectTab('personal_details')"
+                                    class="nav-link {{ $tab == 'personal_details' ? 'active' : '' }}" data-toggle="tab"
+                                    href="#personal_details" role="tab">Personal details</a>
                             </li>
                             <li class="nav-item">
-                                <a wire:click="SelectTab('update_password')" {{ $tab == 'update_password' ? 'active' : '' }} class="nav-link" data-toggle="tab" href="#update_password" role="tab">Update
+                                <a wire:click="selectTab('update_password')"
+                                    class="nav-link {{ $tab == 'update_password' ? 'active' : '' }}" data-toggle="tab"
+                                    href="#update_password" role="tab">Update
                                     Password</a>
                             </li>
                             <li class="nav-item">
-                                <a wire:click="SelectTab('social_links')" {{ $tab == 'social_links' ? 'active' : '' }} class="nav-link" data-toggle="tab" href="#social_links" role="tab">
+                                <a wire:click="selectTab('social_links')"
+                                    class="nav-link {{ $tab == 'social_links' ? 'active' : '' }}" data-toggle="tab"
+                                    href="#social_links" role="tab">
                                     social Links</a>
                             </li>
                         </ul>
                         <div class="tab-content">
-                            <div class="tab-pane fade {{ $tab == 'personal_details' ? 'show active' : '' }}" id="personal_details" role="tabpanel">
+                            <div class="tab-pane fade {{ $tab == 'personal_details' ? 'show active' : '' }}"
+                                id="personal_details" role="tabpanel">
                                 <div class="pd-20">
-                                    ---- Personal Details ----
+                                    <form wire:submit="updatePersonalDetails()">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="">Full Name</label>
+                                                    <input type="text" class="form-control" wire:model="name" placeholder="Enter full name">
+                                                    @error('name')
+                                                        <span class="text-danger ml-1">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="">Email</label>
+                                                    <input type="text" class="form-control" wire:model="email" placeholder="Enter email address" disabled>
+                                                    @error('email')
+                                                        <span class="text-danger ml-1">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="">Username</label>
+                                                    <input type="text" class="form-control" wire:model="username" placeholder="Enter Username">
+                                                    @error('username')
+                                                        <span class="text-danger ml-1">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="">Bio</label>
+                                                    <textarea name="bio" cols="4" rows="4" class="form-control" name="bio" placeholder="Type your bio..." id=""></textarea>
+                                                    @error('bio')
+                                                        <span class="text-danger ml-1">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-center">
+                                            <button class="btn btn-primary" type="submit">Save Cahnges</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
-                            <div class="tab-pane fade {{ $tab == 'update_password' ? 'show active' : '' }}" id="update_password" role="tabpanel">
+                            <div class="tab-pane fade {{ $tab == 'update_password' ? 'show active' : '' }}"
+                                id="update_password" role="tabpanel">
                                 <div class="pd-20 profile-task-wrap">
                                     --- Update Password ---
                                 </div>
                             </div>
-                            <div class="tab-pane fade {{ $tab == 'social_links' ? 'show active' : '' }}" id="social_links" role="tabpanel">
+                            <div class="tab-pane fade {{ $tab == 'social_links' ? 'show active' : '' }}"
+                                id="social_links" role="tabpanel">
                                 <div class="pd-20 profile-task-wrap">
                                     --- Social Links ---
                                 </div>

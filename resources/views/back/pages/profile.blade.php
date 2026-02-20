@@ -24,4 +24,6 @@
 
     @livewire('admin.profile')
 
+    
+
 @endsection

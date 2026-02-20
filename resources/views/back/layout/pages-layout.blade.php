@@ -27,6 +27,10 @@
 
 
 <body>
+    {{-- Toasts --}}
+    <x-notify-alerts></x-notify-alerts>
+
+
     <div class="header">
         <div class="header-left">
             <div class="menu-icon bi bi-list"></div>
@@ -327,7 +331,7 @@
     <div class="main-container">
         <div class="pd-ltr-20 xs-pd-20-10">
             <div class="min-height-200px">
-             
+
                 <div class="">
 
                     @yield('content')
@@ -346,6 +350,47 @@
     <script src="{{ asset('back/vendors/scripts/script.min.js') }}"></script>
     <script src="{{ asset('back/vendors/scripts/process.js') }}"></script>
     <script src="{{ asset('back/vendors/scripts/layout-settings.js') }}"></script>
+    <script>
+        // Script for the toast notification to lostern for the showAlert event (livewire))
+        document.addEventListener('livewire:init', () => {
+
+            Livewire.on('showAlert', (data) => {
+                data = data[0];
+
+                const toastEl = document.getElementById('liveToast');
+                const toastMessage = document.getElementById('toast-message');
+
+                // Reset background classes
+                toastEl.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info');
+
+                // Set background color based on type
+                switch (data.type) {
+                    case 'success':
+                        toastEl.classList.add('bg-success');
+                        break;
+                    case 'error':
+                        toastEl.classList.add('bg-danger');
+                        break;
+                    case 'warning':
+                        toastEl.classList.add('bg-warning');
+                        break;
+                    default:
+                        toastEl.classList.add('bg-info');
+                }
+
+                // Set message
+                toastMessage.innerText = data.message;
+
+                // Show toast
+                const toast = new bootstrap.Toast(toastEl, {
+                    delay: 8000
+                });
+
+                toast.show();
+            });
+
+        });
+    </script>
     @stack('scripts')
 </body>
 

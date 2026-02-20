@@ -4,6 +4,7 @@ use Livewire\Component;
 
 new class extends Component {
     
+    protected $listeners = ['refreshUserInfo' => '$refresh'];
     public $user;
 
     public function mount()

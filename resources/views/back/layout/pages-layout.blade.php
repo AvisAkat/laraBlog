@@ -6,6 +6,9 @@
     <meta charset="utf-8" />
     <title>@yield('pageTitle')</title>
 
+     Kropify CSS
+     <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!-- Site favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('back/vendors/images/apple-touch-icon.png') }}" />
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('back/vendors/images/favicon-32x32.png') }}" />
@@ -22,6 +25,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('back/vendors/styles/icon-font.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('back/vendors/styles/style.css') }}" />
 
+    @kropifyStyles 
     @stack('stylesheets')
 </head>
 
@@ -350,6 +354,7 @@
     <script src="{{ asset('back/vendors/scripts/script.min.js') }}"></script>
     <script src="{{ asset('back/vendors/scripts/process.js') }}"></script>
     <script src="{{ asset('back/vendors/scripts/layout-settings.js') }}"></script>
+     @kropifyScripts
     <script>
         // Script for the toast notification to lostern for the showAlert event (livewire))
         document.addEventListener('livewire:init', () => {
@@ -392,6 +397,7 @@
         });
     </script>
     @stack('scripts')
+    
 </body>
 
 </html>

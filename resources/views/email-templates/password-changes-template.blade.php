@@ -75,7 +75,7 @@
                     </div>
 
                     <div class="content">
-                        <p>Hello, <b>{{ $user->username }}</b></p>
+                        <p>Hello, <b>{{ $user->name }}</b></p>
                         <p>Your account password has been successfully updated. Below are your updated login details:
                         </p>
 

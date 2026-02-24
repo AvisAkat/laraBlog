@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1483742e2e328a81d14d3b0a34529471",
+    "content-hash": "d3471758eb166650688f5407ef521edb",
     "packages": [
         {
             "name": "brick/math",
@@ -3449,6 +3449,66 @@
                 "source": "https://github.com/ramsey/uuid/tree/4.9.2"
             },
             "time": "2025-12-14T04:43:48+00:00"
+        },
+        {
+            "name": "sawastacks/kropify-laravel",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sawastacks/kropify-laravel.git",
+                "reference": "d39603fbc8031b6f2692c85a59d11f643dcc9718"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sawastacks/kropify-laravel/zipball/d39603fbc8031b6f2692c85a59d11f643dcc9718",
+                "reference": "d39603fbc8031b6f2692c85a59d11f643dcc9718",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2|^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "SawaStacks\\Utils\\KropifyServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "SawaStacks\\Utils\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sawa Stacks Inc.",
+                    "email": "sawastacks@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Kropify is a tool that can be integrated into Laravel framework from version 8 and above for the purpose of giving users easy way to crop their profile pictures and cover images.",
+            "homepage": "https://github.com/sawastacks/kropify-laravel",
+            "keywords": [
+                "crop",
+                "cropper",
+                "cropping",
+                "ijabocroptool",
+                "kropify",
+                "laravel",
+                "laravel-kropify",
+                "php",
+                "sawastacks"
+            ],
+            "support": {
+                "issues": "https://github.com/sawastacks/kropify-laravel/issues",
+                "source": "https://github.com/sawastacks/kropify-laravel/tree/v3.0.0"
+            },
+            "time": "2025-05-31T20:27:30+00:00"
         },
         {
             "name": "symfony/clock",

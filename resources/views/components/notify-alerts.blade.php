@@ -8,7 +8,9 @@
 
                     </span>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                <button class="close" type="button" data-dismiss="toast" aria-label="Close" style="margin-right: 8px;">
+                    <span aria-hidden="true" class="text-light">&times;</span>
+                </button>
             </div>
         </div>
     </div>

@@ -194,7 +194,7 @@ class AuthController extends Controller
 
         // update password
         User::where('email', $user->email)
-            ->update([
+            ->update([  
                 'password' => Hash::make($request->new_password),
             ]);
 

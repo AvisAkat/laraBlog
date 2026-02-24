@@ -24,6 +24,42 @@
 
     @livewire('admin.profile')
 
-    
-
 @endsection
+@push('scripts')
+    <script>
+
+        const cropper = new Kropify('#profilePictureFile', {
+            aspectRatio: 1,
+            preview: 'image#profilePicturePreview',
+            processURL: '{{ route('admin.update_profile_picture') }}',
+            allowedExtensions: ['jpg', 'jpeg', 'png'],
+            showLoader: true,
+            animationClass: 'pulse',
+            fileName: 'profilePictureFile',
+            cancelButtonText: 'Cancel',
+            maxWoH: 255,
+
+            onError: function (msg) {
+                console.log(msg);
+            },
+
+            onDone: function (response) {
+
+                if (response.status === 1) {
+                    Livewire.dispatch('refreshUserInfo',[]);
+                    Livewire.dispatch('showAlert', [{
+                        type: 'success',
+                        message: response.message
+                    }]);
+                     
+                } else {
+                    Livewire.dispatch('showAlert', [{
+                        type: 'error',
+                        message: response.message
+                    }]);
+                }
+            }
+        });
+
+    </script>
+@endpush

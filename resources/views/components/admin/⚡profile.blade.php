@@ -111,13 +111,9 @@ new class extends Component {
             Session::flash('info', 'Your passord has been changed successfully changed. Please login with new password.');
             $this->redirectRoute('admin.login');
 
-
-
         } else {
             $this->dispatch('showAlert', ['type' => 'error', 'message' => 'Failed to update password. Please try again.']);
         }
-
-
 
     }
 

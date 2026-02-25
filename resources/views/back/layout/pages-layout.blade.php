@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <title>@yield('pageTitle')</title>
 
-     Kropify CSS
+     {{-- Kropify CSS --}}
      <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Site favicon -->
@@ -259,9 +259,11 @@
 
     <div class="left-side-bar">
         <div class="brand-logo">
-            <a href="index.html">
-                <img src="{{ asset('back/vendors/images/deskapp-logo.svg') }}" alt="" class="dark-logo" />
-                <img src="{{ asset('back/vendors/images/deskapp-logo-white.svg') }}" alt="" class="light-logo" />
+            <a href="/">
+                {{-- <img src="{{ asset('back/vendors/images/deskapp-logo.svg') }}" alt="" class="dark-logo" />
+                <img src="{{ asset('back/vendors/images/deskapp-logo-white.svg') }}" alt="" class="light-logo" /> --}}
+                <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt="" class="dark-logo site_logo" />
+                <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt="" class="light-logo site_logo" />
             </a>
             <div class="close-sidebar" data-toggle="left-sidebar-close">
                 <i class="ion-close-round"></i>
@@ -320,7 +322,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="" class="dropdown-toggle no-arrow">
+                        <a href="{{ route('admin.settings') }}" class="dropdown-toggle no-arrow">
                             <span class="micon fa fa-cogs"></span>
                             <span class="mtext">General
                             </span>

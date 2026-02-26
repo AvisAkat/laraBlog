@@ -145,7 +145,7 @@ new class extends Component {
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4"><span class="text-blue">No item found!</span></td>
+                                    <td class="text-center" colspan="4"><span class="text-blue">No item found!</span></td>
                                 </tr>
                             @endforelse
 

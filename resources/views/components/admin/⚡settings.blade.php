@@ -153,7 +153,9 @@ new class extends Component {
                         <div class="col-md-6">
                             <h6>Site logo</h6>
                             <div class="mb-2 mt-1" style="max-width: 200px">
-                                <img wire:ignore src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt="" class="img-thumbnail" id="preview_site_logo">
+                                <img wire:ignore
+                                    src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}"
+                                    alt="" class="img-thumbnail" id="preview_site_logo">
                             </div>
                             <form action="{{ route('admin.update_logo') }}" method="post" enctype="multipart/form-data"
                                 id="updateLogoForm">
@@ -165,6 +167,25 @@ new class extends Component {
 
                                 </div>
                                 <button type="submit" class="btn btn-primary">Change Logo</button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Site Favicon</h6>
+                            <div class="mb-2 mt-1" style="max-width: 100px">
+                                <img wire:ignore
+                                    src="/images/site/{{ isset(settings()->site_favicon) ? settings()->site_favicon : '' }}"
+                                    alt="" class="img-thumbnail" id="preview_site_favicon">
+                            </div>
+                            <form action="{{ route('admin.update_favicon') }}" method="post" enctype="multipart/form-data"
+                                id="updateFaviconForm">
+                                @csrf
+                                <div class="mb-4">
+                                    <input type="file" name="site_favicon" id="site_favicon"
+                                        class="form-control-file form-control height-auto ">
+                                    <span class="text-danger ml-1"></span>
+
+                                </div>
+                                <button type="submit" class="btn btn-primary">Change Favicon</button>
                             </form>
                         </div>
                     </div>

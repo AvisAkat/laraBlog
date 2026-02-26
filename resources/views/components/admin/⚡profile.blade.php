@@ -117,7 +117,7 @@ new class extends Component {
 
     }
 
-    //SOCIAL LINKS
+    //SOCIAL LINKS  
     public function updateSociallinks()
     {
         $this->validate([

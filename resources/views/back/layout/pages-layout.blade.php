@@ -10,9 +10,7 @@
      <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Site favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('back/vendors/images/apple-touch-icon.png') }}" />
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('back/vendors/images/favicon-32x32.png') }}" />
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('back/vendors/images/favicon-16x16.png') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/site/{{ isset(settings()->site_favicon) ? settings()->site_favicon : ''  }}" />
 
     <!-- Mobile Specific Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
@@ -20,10 +18,16 @@
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet" />
+
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="{{ asset('back/vendors/styles/core.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('back/vendors/styles/icon-font.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('back/vendors/styles/style.css') }}" />
+
+    {{-- JQuery UI CSS --}}
+    <link rel="stylesheet" type="text/css" href="{{ asset('extra-assets/jquery-ui/jquery-ui.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('extra-assets/jquery-ui/jquery-ui.structure.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('extra-assets/jquery-ui/jquery-ui.theme.min.css') }}" />
 
     @kropifyStyles 
     @stack('stylesheets')
@@ -279,7 +283,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="" class="dropdown-toggle no-arrow">
+                        <a href="{{ route('admin.categories') }}" class="dropdown-toggle no-arrow">
                             <span class="micon fa fa-th-list"></span><span class="mtext">Categories</span>
                         </a>
                     </li>
@@ -356,6 +360,7 @@
     <script src="{{ asset('back/vendors/scripts/script.min.js') }}"></script>
     <script src="{{ asset('back/vendors/scripts/process.js') }}"></script>
     <script src="{{ asset('back/vendors/scripts/layout-settings.js') }}"></script>
+    <script src="{{ asset('extra-assets/jquery-ui/jquery-ui.min.js') }}"></script>
      @kropifyScripts
     <script>
         // Script for the toast notification to lostern for the showAlert event (livewire))
@@ -390,7 +395,7 @@
 
                 // Show toast
                 const toast = new bootstrap.Toast(toastEl, {
-                    delay: 8000
+                    delay: 5000
                 });
 
                 toast.show();

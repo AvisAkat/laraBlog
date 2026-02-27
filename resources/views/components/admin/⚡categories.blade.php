@@ -10,7 +10,9 @@ new class extends Component {
     //Parent Category Modal
     public $isUpateParentCategoryMode = false;
     public $pcategory_id, $pcategory_name;
+    public $pcategory_delete_id;
 
+    protected $listeners = ['updateCategoryOrdering'];
 
     //Parent Category
     public function addParentCategory()
@@ -57,7 +59,7 @@ new class extends Component {
         $pcategory = ParentCategory::findOrFail($this->pcategory_id);
 
         $this->validate([
-            'pcategory_name' => 'required|unique:parent_categories,name,'.$pcategory->id
+            'pcategory_name' => 'required|unique:parent_categories,name,' . $pcategory->id
         ], [
             'pcategory_name.required' => 'Parent category field is required.',
             'pcategory_name.unique' => 'Parent category already exists.'
@@ -68,11 +70,48 @@ new class extends Component {
             'slug' => null
         ]);
 
-        if ( $updated) {
+        if ($updated) {
             $this->hideParentCategoryModalForm();
             $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Parent Category updated successfully!']);
+        } else {
+            $this->dispatch('showAlert', ['type' => 'error', 'message' => 'Something went wrong.']);
+        }
+    }
+
+    public function deleteParentCategory($id)
+    {
+        $pcategory = ParentCategory::findOrFail($id);
+
+        //Check if this parent category has children
+        
+        //Delete parent Category
+        $deleted = $pcategory->delete();
+
+        if($deleted){
+            $this->dispatch('hideDeleteConfirmationModal');
+            $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Parent Category has been deleted successfully!']);
         }else{
             $this->dispatch('showAlert', ['type' => 'error', 'message' => 'Something went wrong.']);
+        }
+
+    }
+
+    public function showDeleteConfirmationModal($id)
+    {
+        $this->pcategory_delete_id = $id;
+        $this->dispatch('showDeleteConfirmationModal');
+    }
+
+
+
+    public function updateCategoryOrdering($positions)
+    {
+        foreach ($positions as $position) {
+            $index = $position[0];
+            $new_position = $position[1];
+            ParentCategory::where('id', $index)->update([
+                'ordering' => $new_position
+            ]);
         }
     }
 
@@ -125,9 +164,9 @@ new class extends Component {
                             <th>N. of categories</th>
                             <th>Actions</th>
                         </thead>
-                        <tbody>
+                        <tbody id="sortable_parent_categories">
                             @forelse($this->parentCategories() as $item)
-                                <tr>
+                                <tr data-index="{{ $item->id }}" data-ordering="{{ $item->ordering }}">
                                     <td>{{ $item->id }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td> - </td>
@@ -137,7 +176,8 @@ new class extends Component {
                                                 class="text-primary mx-2">
                                                 <i class="dw dw-edit2"></i>
                                             </a>
-                                            <a href="" class="text-danger mx-2">
+                                            <a href="javascript:;" wire:click="showDeleteConfirmationModal({{ $item->id }})"
+                                                class="text-danger mx-2">
                                                 <i class="dw dw-delete-3"></i>
                                             </a>
                                         </div>
@@ -201,6 +241,7 @@ new class extends Component {
     </div>
 
     {{-- MODALS --}}
+    {{-- Add and update parent category modal --}}
     <div wire:ignore.self class="modal fade" id="pcategory_modal" tabindex="-1" role="dialog"
         aria-labelledby="myLargeModalLabel" aria-modal="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
@@ -238,6 +279,40 @@ new class extends Component {
             </form>
         </div>
     </div>
+
+    {{-- Delete confirmation modal --}}
+    <div wire:ignore.self class="modal fade" id="delete_confirmation_modal" tabindex="-1" role="dialog"
+        aria-modal="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body text-center font-18">
+                    <h4 class="padding-top-30 mb-30 weight-500">
+                        Are you sure you want to delete?
+                    </h4>
+                    <div class="padding-bottom-30 row" style="max-width: 170px; margin: 0 auto">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-secondary border-radius-100 btn-block confirmation-btn"
+                                data-dismiss="modal">
+                                <i class="fa fa-times"></i>
+                            </button>
+                            Cancel
+                        </div>
+                        <div class="col-6">
+                            <a href="javascript:;" wire:click="deleteParentCategory({{ $pcategory_delete_id }})"
+                                class="btn btn-primary border-radius-100 btn-block confirmation-btn">
+                                <i class="fa fa-check"></i>
+                            </a>
+                            YES
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- MODALS END --}}
+
+
 
 
 

@@ -8,18 +8,22 @@ use Livewire\Attributes\Computed;
 new class extends Component {
 
     //Parent Category Modal
-    public $isUpateParentCategoryMode = false;
+    public $isUpdateParentCategoryMode = false;
     public $pcategory_id, $pcategory_name;
     public $pcategory_delete_id;
 
-    protected $listeners = ['updateCategoryOrdering'];
+    protected $listeners = ['updateParentCategoryOrdering'];
+
+    //Category Modal
+    public $isUpdateCategoryMode = false;
+    public $category_id, $category_name;
 
     //Parent Category
     public function addParentCategory()
     {
         $this->pcategory_id = null;
         $this->pcategory_name = null;
-        $this->isUpateParentCategoryMode = false;
+        $this->isUpdateParentCategoryMode = false;
         $this->showParentCategoryModalForm();
     }
 
@@ -50,7 +54,7 @@ new class extends Component {
         $pcategory = ParentCategory::findOrFail($id);
         $this->pcategory_id = $pcategory->id;
         $this->pcategory_name = $pcategory->name;
-        $this->isUpateParentCategoryMode = true;
+        $this->isUpdateParentCategoryMode = true;
         $this->showParentCategoryModalForm();
     }
 
@@ -96,7 +100,7 @@ new class extends Component {
 
     }
 
-    public function showDeleteConfirmationModal($id)
+    public function showParentCategoryDeleteConfirmationModal($id)
     {
         $this->pcategory_delete_id = $id;
         $this->dispatch('showDeleteConfirmationModal');
@@ -104,7 +108,7 @@ new class extends Component {
 
 
 
-    public function updateCategoryOrdering($positions)
+    public function updateParentCategoryOrdering($positions)
     {
         foreach ($positions as $position) {
             $index = $position[0];
@@ -133,6 +137,32 @@ new class extends Component {
     {
         $parent_categories = ParentCategory::orderBy('ordering', 'asc')->get();
         return $parent_categories;
+    }
+
+    // Category
+    public fuction addCategory()
+    {
+        $this->category_id = null;
+        $this->category_name = null;
+    }
+
+
+    public function showCategoryModalForm()
+    {
+        $this->resetErrorBag();
+        $this->dispatch('showCategoryModalForm');
+    }
+
+    public function hideCategoryModalForm()
+    {
+        $this->dispatch('hideCategoryModalForm');
+        $this->isUpdateCategoryMode = false;
+        $this->category_id = $this->category_name = null;
+    }
+
+    public function createCategory()
+    {
+
     }
 
 
@@ -176,7 +206,7 @@ new class extends Component {
                                                 class="text-primary mx-2">
                                                 <i class="dw dw-edit2"></i>
                                             </a>
-                                            <a href="javascript:;" wire:click="showDeleteConfirmationModal({{ $item->id }})"
+                                            <a href="javascript:;" wire:click="showParentCategoryDeleteConfirmationModal({{ $item->id }})"
                                                 class="text-danger mx-2">
                                                 <i class="dw dw-delete-3"></i>
                                             </a>
@@ -204,7 +234,7 @@ new class extends Component {
                         </h4>
                     </div>
                     <div class="pull-right">
-                        <a href="" class="btn btn-primary btn-sm">Add Category</a>
+                        <a href="javascript:;" wire:click="addCategory()" class="btn btn-primary btn-sm">Add Category</a>
                     </div>
                 </div>
                 <div class="table-responsive mt-4">
@@ -246,17 +276,17 @@ new class extends Component {
         aria-labelledby="myLargeModalLabel" aria-modal="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
             <form class="modal-content"
-                wire:submit="{{ $isUpateParentCategoryMode ? 'updateParentCategory()' : 'createParentCategory()' }}">
+                wire:submit="{{ $isUpdateParentCategoryMode ? 'updateParentCategory()' : 'createParentCategory()' }}">
                 <div class="modal-header">
                     <h4 class="modal-title" id="myLargeModalLabel">
-                        {{ $isUpateParentCategoryMode ? 'Update Parent Category' : 'Add Parent Category' }}
+                        {{ $isUpdateParentCategoryMode ? 'Update Parent Category' : 'Add Parent Category' }}
                     </h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                         ×
                     </button>
                 </div>
                 <div class="modal-body">
-                    @if ($isUpateParentCategoryMode)
+                    @if ($isUpdateParentCategoryMode)
                         <input type="hidden" wire:modal="pcategory_id">
                     @endif
                     <div class="form-group">
@@ -273,42 +303,63 @@ new class extends Component {
                         Close
                     </button>
                     <button type="submit" class="btn btn-primary">
-                        {{ $isUpateParentCategoryMode ? 'Save changes' : 'Create' }}
+                        {{ $isUpdateParentCategoryMode ? 'Save changes' : 'Create' }}
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    {{-- Delete confirmation modal --}}
-    <div wire:ignore.self class="modal fade" id="delete_confirmation_modal" tabindex="-1" role="dialog"
-        aria-modal="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-body text-center font-18">
-                    <h4 class="padding-top-30 mb-30 weight-500">
-                        Are you sure you want to delete?
+
+    {{-- Add and update category modal --}}
+    <div wire:ignore.self class="modal fade" id="category_modal" tabindex="-1" role="dialog"
+        aria-labelledby="myLargeModalLabel" aria-modal="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content"
+                wire:submit="{{ $isUpdateCategoryMode ? 'updateCategory()' : 'createCategory()' }}">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myLargeModalLabel">
+                        {{ $isUpdateCategoryMode ? 'Update Category' : 'Add Category' }}
                     </h4>
-                    <div class="padding-bottom-30 row" style="max-width: 170px; margin: 0 auto">
-                        <div class="col-6">
-                            <button type="button" class="btn btn-secondary border-radius-100 btn-block confirmation-btn"
-                                data-dismiss="modal">
-                                <i class="fa fa-times"></i>
-                            </button>
-                            Cancel
-                        </div>
-                        <div class="col-6">
-                            <a href="javascript:;" wire:click="deleteParentCategory({{ $pcategory_delete_id }})"
-                                class="btn btn-primary border-radius-100 btn-block confirmation-btn">
-                                <i class="fa fa-check"></i>
-                            </a>
-                            YES
-                        </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        ×
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @if ($isUpdateCategoryMode)
+                        <input type="hidden" wire:modal="category_id">
+                    @endif
+                    <div class="form-group">
+                        <label for=""><b>Category name</b></label>
+                        <input type="text" wire:model="category_name" class="form-control"
+                            placeholder="Enter category name here...">
+                        @error('category_name')
+                            <span class="text-danger ml-1">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
-            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        {{ $isUpdateCategoryMode ? 'Save changes' : 'Create' }}
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+
+
+
+    {{-- Delete confirmation modal --}}
+    @component('components.delete-confirmation-modal', [
+        'delete_id' => $pcategory_delete_id, 
+        'delete_function_name' => 'deleteParentCategory',
+        'delete_name' => 'Parent Category'
+        ])
+    
+    @endcomponent
 
     {{-- MODALS END --}}
 

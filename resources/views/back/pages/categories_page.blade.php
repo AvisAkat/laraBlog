@@ -7,12 +7,21 @@
 @endsection
 @push('scripts')
     <script>
+        // Parent Category Modal
         window.addEventListener('showParentCategoryModalForm', function () {
             $('#pcategory_modal').modal('show');
         });
-
         window.addEventListener('hideParentCategoryModalForm', function () {
             $('#pcategory_modal').modal('hide');
+        });
+
+        // Category Modal
+        window.addEventListener('showCategoryModalForm', function () {
+            $('#category_modal').modal('show');
+        });
+
+        window.addEventListener('hideCategoryModalForm', function () {
+            $('#category_modal').modal('hide');
         });
 
         // Sort Parent Category Table
@@ -30,7 +39,7 @@
                     $(this).removeClass('updated');
                 });
 
-                Livewire.dispatch('updateCategoryOrdering', {positions: positions});
+                Livewire.dispatch('updateParentCategoryOrdering', {positions: positions});
             }
         });
 

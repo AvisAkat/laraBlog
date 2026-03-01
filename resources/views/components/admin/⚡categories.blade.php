@@ -16,7 +16,7 @@ new class extends Component {
 
     //Category Modal
     public $isUpdateCategoryMode = false;
-    public $category_id, $category_name;
+    public $category_id, $category_name, $parent = 0;
 
     //Parent Category
     public function addParentCategory()
@@ -87,14 +87,14 @@ new class extends Component {
         $pcategory = ParentCategory::findOrFail($id);
 
         //Check if this parent category has children
-        
+
         //Delete parent Category
         $deleted = $pcategory->delete();
 
-        if($deleted){
+        if ($deleted) {
             $this->dispatch('hideDeleteConfirmationModal');
             $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Parent Category has been deleted successfully!']);
-        }else{
+        } else {
             $this->dispatch('showAlert', ['type' => 'error', 'message' => 'Something went wrong.']);
         }
 
@@ -140,10 +140,40 @@ new class extends Component {
     }
 
     // Category
-    public fuction addCategory()
+    public function addCategory()
     {
         $this->category_id = null;
         $this->category_name = null;
+        $this->parent = 0;
+
+        $this->isUpdateCategoryMode = false;
+        $this->showCategoryModalForm();
+    }
+
+    public function createCategory()
+    {
+        $this->validate([
+            'category_name' => 'required|unique:categories,name',
+            'parent' => 'required|exists:parent_categories,id'
+        ], [
+            'category_name.required' => 'Category field is required.',
+            'category_name.unique' => 'Category name already exists.',
+            'parent.required' => 'You must select a parent category.',
+            'parent.exists' => 'Please select a valid parent category.'
+        ]);
+
+        // Store new Category
+        $category = new Category();
+        $category ->parent = $this->parent;
+        $category->name = $this->category_name;
+        $saved = $category->save();
+
+        if( $saved ) {
+            $this->hideCategoryModalForm();
+            $this->dispatch('showAlert', ['type' => 'success', 'message' => 'New category has been created successfully.']);
+        } else {
+            $this->dispatch('showAlert', ['type' => 'error', 'message' => 'Something went wrong. Try again!']);
+        }
     }
 
 
@@ -158,12 +188,10 @@ new class extends Component {
         $this->dispatch('hideCategoryModalForm');
         $this->isUpdateCategoryMode = false;
         $this->category_id = $this->category_name = null;
+        $this->parent = 0;
     }
 
-    public function createCategory()
-    {
 
-    }
 
 
 };
@@ -206,7 +234,8 @@ new class extends Component {
                                                 class="text-primary mx-2">
                                                 <i class="dw dw-edit2"></i>
                                             </a>
-                                            <a href="javascript:;" wire:click="showParentCategoryDeleteConfirmationModal({{ $item->id }})"
+                                            <a href="javascript:;"
+                                                wire:click="showParentCategoryDeleteConfirmationModal({{ $item->id }})"
                                                 class="text-danger mx-2">
                                                 <i class="dw dw-delete-3"></i>
                                             </a>
@@ -234,7 +263,8 @@ new class extends Component {
                         </h4>
                     </div>
                     <div class="pull-right">
-                        <a href="javascript:;" wire:click="addCategory()" class="btn btn-primary btn-sm">Add Category</a>
+                        <a href="javascript:;" wire:click="addCategory()" class="btn btn-primary btn-sm">Add
+                            Category</a>
                     </div>
                 </div>
                 <div class="table-responsive mt-4">
@@ -329,6 +359,19 @@ new class extends Component {
                     @if ($isUpdateCategoryMode)
                         <input type="hidden" wire:modal="category_id">
                     @endif
+
+                    <div class="form-group">
+                        <label for=""><b>Parent category</b></label>
+                        <select wire:model="parent" class="custom-select">
+                            <option value="0">Uncategorized</option>
+                            @foreach ($this->parentCategories() as $pcategory)
+                                <option value="{{ $pcategory->id }}">{{ $pcategory->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('parent')
+                            <span class="text-danger ml-1">{{ $message }}</span>
+                        @enderror
+                    </div>
                     <div class="form-group">
                         <label for=""><b>Category name</b></label>
                         <input type="text" wire:model="category_name" class="form-control"
@@ -351,17 +394,20 @@ new class extends Component {
     </div>
 
 
-
     {{-- Delete confirmation modal --}}
-    @component('components.delete-confirmation-modal', [
-        'delete_id' => $pcategory_delete_id, 
-        'delete_function_name' => 'deleteParentCategory',
-        'delete_name' => 'Parent Category'
+    <div>
+
+        @component('components.delete-confirmation-modal', [
+            'delete_id' => $pcategory_delete_id,
+            'delete_function_name' => 'deleteParentCategory',
+            'delete_name' => 'Parent Category'
         ])
-    
-    @endcomponent
+
+        @endcomponent
+    </div>
 
     {{-- MODALS END --}}
+
 
 
 

@@ -176,6 +176,12 @@ new class extends Component {
         }
     }
 
+    public function categories()
+    {
+        $categories = Category::orderBy('ordering', 'asc')->get();
+        return $categories;
+    }
+
 
     public function showCategoryModalForm()
     {
@@ -190,8 +196,6 @@ new class extends Component {
         $this->category_id = $this->category_name = null;
         $this->parent = 0;
     }
-
-
 
 
 };
@@ -227,7 +231,7 @@ new class extends Component {
                                 <tr data-index="{{ $item->id }}" data-ordering="{{ $item->ordering }}">
                                     <td>{{ $item->id }}</td>
                                     <td>{{ $item->name }}</td>
-                                    <td> - </td>
+                                    <td> {{ $item->children->count() }} </td>
                                     <td>
                                         <div class="table-actions">
                                             <a href="javascript:;" wire:click="editParentCategory({{ $item->id }})"
@@ -277,22 +281,31 @@ new class extends Component {
                             <th>Actions</th>
                         </thead>
                         <tbody>
+                            @forelse ($this->categories() as $item)
+                                <tr>
+                                    <td>{{ $item->id }}</td>
+                                    <td>{{ $item->name }}</td>
+                                    <td>
+                                        {{ $item->parent_category->name }}
+                                    </td>
+                                    <td>-</td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <a href="" class="text-primary mx-2">
+                                                <i class="dw dw-edit2"></i>
+                                            </a>
+                                            <a href="" class="text-danger mx-2">
+                                                <i class="dw dw-delete-3"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
                             <tr>
-                                <td>1</td>
-                                <td>P. Cat 1</td>
-                                <td>Any</td>
-                                <td>4</td>
-                                <td>
-                                    <div class="table-actions">
-                                        <a href="" class="text-primary mx-2">
-                                            <i class="dw dw-edit2"></i>
-                                        </a>
-                                        <a href="" class="text-danger mx-2">
-                                            <i class="dw dw-delete-3"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                                    <td class="text-center" colspan="r"><span class="text-blue">No item found!</span></td>
+                                </tr>
+                                
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -393,10 +406,7 @@ new class extends Component {
         </div>
     </div>
 
-
     {{-- Delete confirmation modal --}}
-    <div>
-
         @component('components.delete-confirmation-modal', [
             'delete_id' => $pcategory_delete_id,
             'delete_function_name' => 'deleteParentCategory',
@@ -404,13 +414,8 @@ new class extends Component {
         ])
 
         @endcomponent
-    </div>
 
     {{-- MODALS END --}}
-
-
-
-
 
 
 </div>

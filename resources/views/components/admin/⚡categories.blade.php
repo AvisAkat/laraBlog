@@ -182,6 +182,31 @@ new class extends Component {
         return $categories;
     }
 
+    public function editCategory($id)
+    {
+        $category = Category::findOrFail($id);
+        $this->category_name = $category->name;
+        $this->category_id = $category->id;
+        $this->parent = $category->parent;
+        $this->isUpdateCategoryMode = true;
+        $this->dispatch('showCategoryModalForm');
+    }
+
+    public function updateCategory()
+    {
+        $category = Category::findOrFail($this->category_id);
+
+        $this->validate([
+            'category_name' => 'required|unique:categories,name,'. $category->id,
+            'parent' => 'required|exists:parent_categories,id'
+        ], [
+            'category_name.required' => 'Category field is required.',
+            'category_name.unique' => 'Category name already exists.',
+            'parent.required' => 'You must select a parent category.',
+            'parent.exists' => 'Please select a valid parent category.'
+        ]);
+    }
+
 
     public function showCategoryModalForm()
     {
@@ -291,7 +316,7 @@ new class extends Component {
                                     <td>-</td>
                                     <td>
                                         <div class="table-actions">
-                                            <a href="" class="text-primary mx-2">
+                                            <a href="javascript:;" wire:click="editCategory({{ $item->id }})" class="text-primary mx-2">
                                                 <i class="dw dw-edit2"></i>
                                             </a>
                                             <a href="" class="text-danger mx-2">

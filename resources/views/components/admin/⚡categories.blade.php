@@ -4,19 +4,29 @@ use Livewire\Component;
 use App\Models\ParentCategory;
 use App\Models\Category;
 use Livewire\Attributes\Computed;
+use Livewire\WithPagination;
 
 new class extends Component {
+    use WithPagination;
 
     //Parent Category Modal
     public $isUpdateParentCategoryMode = false;
     public $pcategory_id, $pcategory_name;
-    public $pcategory_delete_id;
 
-    protected $listeners = ['updateParentCategoryOrdering'];
 
     //Category Modal
     public $isUpdateCategoryMode = false;
     public $category_id, $category_name, $parent = 0;
+
+    //Delte Parent Category and Category Modal info
+    public $delete_id, $delete_function_name, $delete_name;
+
+    //Pagination
+    public $pcactegoriesPerPage = 5;
+    public $categoriesPerPage = 7;
+
+
+    protected $listeners = ['updateParentCategoryOrdering', 'updateCategoryOrdering'];
 
     //Parent Category
     public function addParentCategory()
@@ -87,6 +97,12 @@ new class extends Component {
         $pcategory = ParentCategory::findOrFail($id);
 
         //Check if this parent category has children
+        if ($pcategory->children->count() > 0) {
+            foreach ($pcategory->children as $category) {
+                //Release a category
+                Category::where('id', $category->id)->update(['parent' => 0]);
+            }
+        }
 
         //Delete parent Category
         $deleted = $pcategory->delete();
@@ -95,6 +111,7 @@ new class extends Component {
             $this->dispatch('hideDeleteConfirmationModal');
             $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Parent Category has been deleted successfully!']);
         } else {
+            $this->dispatch(('hideDeleteConfirmationModal'));
             $this->dispatch('showAlert', ['type' => 'error', 'message' => 'Something went wrong.']);
         }
 
@@ -102,7 +119,9 @@ new class extends Component {
 
     public function showParentCategoryDeleteConfirmationModal($id)
     {
-        $this->pcategory_delete_id = $id;
+        $this->delete_id = $id;
+        $this->delete_function_name = 'deleteParentCategory';
+        $this->delete_name = 'Parent Category';
         $this->dispatch('showDeleteConfirmationModal');
     }
 
@@ -132,10 +151,10 @@ new class extends Component {
         $this->pcategory_id = $this->pcategory_name = null;
     }
 
-
+    //Displayinf parent categories into the parent category table
     public function parentCategories()
     {
-        $parent_categories = ParentCategory::orderBy('ordering', 'asc')->get();
+        $parent_categories = ParentCategory::orderBy('ordering', 'asc')->paginate($this->pcactegoriesPerPage, ['*'], 'pcat_page');
         return $parent_categories;
     }
 
@@ -164,11 +183,11 @@ new class extends Component {
 
         // Store new Category
         $category = new Category();
-        $category ->parent = $this->parent;
+        $category->parent = $this->parent;
         $category->name = $this->category_name;
         $saved = $category->save();
 
-        if( $saved ) {
+        if ($saved) {
             $this->hideCategoryModalForm();
             $this->dispatch('showAlert', ['type' => 'success', 'message' => 'New category has been created successfully.']);
         } else {
@@ -176,9 +195,10 @@ new class extends Component {
         }
     }
 
+    //For displaying categories into the categories table
     public function categories()
     {
-        $categories = Category::orderBy('ordering', 'asc')->get();
+        $categories = Category::orderBy('ordering', 'asc')->paginate($this->categoriesPerPage, ['*'], 'cat_page');
         return $categories;
     }
 
@@ -197,7 +217,7 @@ new class extends Component {
         $category = Category::findOrFail($this->category_id);
 
         $this->validate([
-            'category_name' => 'required|unique:categories,name,'. $category->id,
+            'category_name' => 'required|unique:categories,name,' . $category->id,
             'parent' => 'required|exists:parent_categories,id'
         ], [
             'category_name.required' => 'Category field is required.',
@@ -205,6 +225,60 @@ new class extends Component {
             'parent.required' => 'You must select a parent category.',
             'parent.exists' => 'Please select a valid parent category.'
         ]);
+
+        // update category 
+        $category->name = $this->category_name;
+        $category->parent = $this->parent;
+        $category->slug = null;
+        $updated = $category->save();
+
+        if ($updated) {
+            $this->hideCategoryModalForm();
+            $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Category updated successfully!']);
+        } else {
+            $this->dispatch('showAlert', ['type' => 'error', 'message' => 'Something went wrong.']);
+        }
+
+
+    }
+
+    //Odering Category Table
+    public function updateCategoryOrdering($positions)
+    {
+        foreach ($positions as $position) {
+            $index = $position[0];
+            $new_position = $position[1];
+            Category::where('id', $index)->update([
+                'ordering' => $new_position
+            ]);
+        }
+    }
+
+    //Show delete modal
+    public function showCategoryDeleteConfirmationModal($id)
+    {
+        $this->delete_id = $id;
+        $this->delete_function_name = 'deleteCategory';
+        $this->delete_name = 'Category';
+        $this->dispatch('showDeleteConfirmationModal');
+    }
+
+    public function deleteCategory($id)
+    {
+        $category = Category::findOrFail($id);
+
+        //Check if this category has related post(S)
+
+        //delete category
+        $deleted = $category->delete();
+
+        if ($deleted) {
+            $this->dispatch('hideDeleteConfirmationModal');
+            $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Category deleted successfully!']);
+        } else {
+            $this->dispatch(('hideDeleteConfirmationModal'));
+            $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Something went wrong.']);
+        }
     }
 
 
@@ -280,6 +354,9 @@ new class extends Component {
                         </tbody>
                     </table>
                 </div>
+                <div class="d-block mt-1 text-center">
+                    {{ $this->parentCategories()->links('livewire::simple-bootstrap') }}
+                </div>
             </div>
         </div>
 
@@ -305,34 +382,40 @@ new class extends Component {
                             <th>N. of posts</th>
                             <th>Actions</th>
                         </thead>
-                        <tbody>
+                        <tbody id="sortable_categories">
                             @forelse ($this->categories() as $item)
-                                <tr>
+                                <tr data-index="{{ $item->id }}" data-ordering="{{ $item->ordering }}">
                                     <td>{{ $item->id }}</td>
                                     <td>{{ $item->name }}</td>
                                     <td>
-                                        {{ $item->parent_category->name }}
+                                        {{ !is_null($item->parent_category) ? $item->parent_category->name : '-'  }}
                                     </td>
                                     <td>-</td>
                                     <td>
                                         <div class="table-actions">
-                                            <a href="javascript:;" wire:click="editCategory({{ $item->id }})" class="text-primary mx-2">
+                                            <a href="javascript:;" wire:click="editCategory({{ $item->id }})"
+                                                class="text-primary mx-2">
                                                 <i class="dw dw-edit2"></i>
                                             </a>
-                                            <a href="" class="text-danger mx-2">
+                                            <a href="javascript:;"
+                                                wire:click="showCategoryDeleteConfirmationModal({{ $item->id }})"
+                                                class="text-danger mx-2">
                                                 <i class="dw dw-delete-3"></i>
                                             </a>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
-                            <tr>
-                                    <td class="text-center" colspan="r"><span class="text-blue">No item found!</span></td>
+                                <tr>
+                                    <td class="text-center" colspan="5"><span class="text-blue">No item found!</span></td>
                                 </tr>
-                                
+
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+                <div class="d-block mt-1 text-center">
+                    {{ $this->categories()->links('livewire::simple-bootstrap') }}
                 </div>
             </div>
         </div>
@@ -432,13 +515,13 @@ new class extends Component {
     </div>
 
     {{-- Delete confirmation modal --}}
-        @component('components.delete-confirmation-modal', [
-            'delete_id' => $pcategory_delete_id,
-            'delete_function_name' => 'deleteParentCategory',
-            'delete_name' => 'Parent Category'
-        ])
+    @component('components.delete-confirmation-modal', [
+        'delete_id' => $delete_id,
+        'delete_function_name' => $delete_function_name,
+        'delete_name' => $delete_name
+    ])
 
-        @endcomponent
+    @endcomponent
 
     {{-- MODALS END --}}
 

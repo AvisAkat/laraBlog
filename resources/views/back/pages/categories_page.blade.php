@@ -43,6 +43,25 @@
             }
         });
 
+        // Sort Category Table
+        $('table tbody#sortable_categories').sortable({
+            cursor: "move",
+            update: function (event, ui) {
+                $(this).children().each(function (index) {
+                    if ($(this).attr('data-ordering') != (index + 1)) {
+                        $(this).attr('data-ordering', (index + 1)).addClass('updated');
+                    }
+                });
+                var positions = [];
+                $('.updated').each(function () {
+                    positions.push([$(this).attr('data-index'), $(this).attr('data-ordering')]);
+                    $(this).removeClass('updated');
+                });
+
+                Livewire.dispatch('updateCategoryOrdering', {positions: positions});
+            }
+        });
+
         //Delete item from parent Category table
         window.addEventListener('showDeleteConfirmationModal', function(event) {
             $('#delete_confirmation_modal').modal('show');

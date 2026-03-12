@@ -28,6 +28,7 @@
 @push('scripts')
     <script>
 
+        //Crop imgae with kropify
         const cropper = new Kropify('#profilePictureFile', {
             aspectRatio: 1,
             preview: 'image#profilePicturePreview',

@@ -6,11 +6,12 @@
     <meta charset="utf-8" />
     <title>@yield('pageTitle')</title>
 
-     {{-- Kropify CSS --}}
-     <meta name="csrf-token" content="{{ csrf_token() }}">
+    {{-- Kropify CSS --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Site favicon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="/images/site/{{ isset(settings()->site_favicon) ? settings()->site_favicon : ''  }}" />
+    <link rel="icon" type="image/png" sizes="16x16"
+        href="/images/site/{{ isset(settings()->site_favicon) ? settings()->site_favicon : ''  }}" />
 
     <!-- Mobile Specific Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
@@ -29,7 +30,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('extra-assets/jquery-ui/jquery-ui.structure.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('extra-assets/jquery-ui/jquery-ui.theme.min.css') }}" />
 
-    @kropifyStyles 
+    @kropifyStyles
     @stack('stylesheets')
 </head>
 
@@ -266,8 +267,10 @@
             <a href="/">
                 {{-- <img src="{{ asset('back/vendors/images/deskapp-logo.svg') }}" alt="" class="dark-logo" />
                 <img src="{{ asset('back/vendors/images/deskapp-logo-white.svg') }}" alt="" class="light-logo" /> --}}
-                <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt="" class="dark-logo site_logo" />
-                <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt="" class="light-logo site_logo" />
+                <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt=""
+                    class="dark-logo site_logo" />
+                <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt=""
+                    class="light-logo site_logo" />
             </a>
             <div class="close-sidebar" data-toggle="left-sidebar-close">
                 <i class="ion-close-round"></i>
@@ -278,24 +281,30 @@
                 <ul id="accordion-menu">
 
                     <li>
-                        <a href="{{ route('admin.dashboard') }}" class="dropdown-toggle no-arrow {{ Route::is('admin.dashboard') ? 'active' : '' }}">
+                        <a href="{{ route('admin.dashboard') }}"
+                            class="dropdown-toggle no-arrow {{ Route::is('admin.dashboard') ? 'active' : '' }}">
                             <span class="micon fa fa-home"></span><span class="mtext">Home</span>
                         </a>
                     </li>
-                    <li>
-                        <a href="{{ route('admin.categories') }}" class="dropdown-toggle no-arrow {{ Route::is('admin.categories') ? 'active' : '' }}">
-                            <span class="micon fa fa-th-list"></span><span class="mtext">Categories</span>
-                        </a>
-                    </li>
+                    @if (auth()->user()->type == 'superAdmin')
+                        <li>
+                            <a href="{{ route('admin.categories') }}"
+                                class="dropdown-toggle no-arrow {{ Route::is('admin.categories') ? 'active' : '' }}">
+                                <span class="micon fa fa-th-list"></span><span class="mtext">Categories</span>
+                            </a>
+                        </li>
+                    @endif
+
                     <li class="dropdown">
-                        <a href="javascript:;" class="dropdown-toggle">
+                        <a href="javascript:;" class="dropdown-toggle {{ Route::is('admin.add_post') || Route::is('admin.posts') ? 'active' : '' }}">
                             <span class="micon fa fa-newspaper-o"></span><span class="mtext"> Posts </span>
                         </a>
                         <ul class="submenu">
-                            <li><a href="">New</a></li>
-                            <li><a href="">Posts</a></li>
+                            <li><a href="{{ route('admin.add_post') }}" class="{{ Route::is('admin.add_post') ? 'active' : '' }}">New</a></li>
+                            <li><a href="{{ route('admin.posts') }}" class="{{ Route::is('admin.posts') ? 'active' : '' }}">Posts</a></li>
                         </ul>
                     </li>
+                    @if (auth()->user()->type == 'superAdmin')
                     <li class="dropdown">
                         <a href="javascript:;" class="dropdown-toggle">
                             <span class="micon fa fa-shopping-bag"></span><span class="mtext">Shop</span>
@@ -305,7 +314,7 @@
                             <li><a href="">All products</a></li>
                         </ul>
                     </li>
-
+                    @endif
                     <li>
                         <a href="invoice.html" class="dropdown-toggle no-arrow">
                             <span class="micon bi bi-receipt-cutoff"></span><span class="mtext">Invoice</span>
@@ -319,19 +328,23 @@
                     </li>
 
                     <li>
-                        <a href="{{ route('admin.profile') }}" class="dropdown-toggle no-arrow {{ Route::is('admin.profile') ? 'active' : '' }}">
+                        <a href="{{ route('admin.profile') }}"
+                            class="dropdown-toggle no-arrow {{ Route::is('admin.profile') ? 'active' : '' }}">
                             <span class="micon fa fa-user-circle"></span>
                             <span class="mtext">Profile
                             </span>
                         </a>
                     </li>
+                    @if (auth()->user()->type == 'superAdmin')
                     <li>
-                        <a href="{{ route('admin.settings') }}" class="dropdown-toggle no-arrow {{ Route::is('admin.settings') ? 'active' : '' }}">
+                        <a href="{{ route('admin.settings') }}"
+                            class="dropdown-toggle no-arrow {{ Route::is('admin.settings') ? 'active' : '' }}">
                             <span class="micon fa fa-cogs"></span>
                             <span class="mtext">General
                             </span>
                         </a>
                     </li>
+                    @endif
                 </ul>
             </div>
         </div>
@@ -361,10 +374,10 @@
     <script src="{{ asset('back/vendors/scripts/process.js') }}"></script>
     <script src="{{ asset('back/vendors/scripts/layout-settings.js') }}"></script>
     <script src="{{ asset('extra-assets/jquery-ui/jquery-ui.min.js') }}"></script>
-     @kropifyScripts
+    @kropifyScripts
     <script>
         // Script for the toast notification to lostern for the showAlert event (livewire))
-        document.addEventListener('livewire:init', () => { 
+        document.addEventListener('livewire:init', () => {
 
             Livewire.on('showAlert', (data) => {
                 data = data[0];
@@ -404,7 +417,7 @@
         });
     </script>
     @stack('scripts')
-    
+
 </body>
 
 </html>

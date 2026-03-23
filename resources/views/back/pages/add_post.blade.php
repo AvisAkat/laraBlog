@@ -39,11 +39,12 @@
                             <span class="text-danger error-text title_error"></span>
                         </div>
                         <div class="form-group">
-                            <label for=""><b>Content</b>:</label>
-                            <textarea name="post_content" id="" cols="30" rows="10" placeholder="Enter post content here...."
-                                class="form-control"></textarea>
+                            <label for="post_content"><b>Content</b>:</label>
+                            <textarea class="form-control" name="post_content" id="post_content" cols="30" rows="10"
+                                placeholder="Enter post content here...."></textarea>
                             <span class="text-danger error-text post_content_error"></span>
                         </div>
+
                     </div>
                 </div>
                 <div class="card card-box mb-2">
@@ -106,7 +107,7 @@
         </div>
 
         <div class="card-box p-2 mb-3 text-center" style="min-width: 8rem; max-width: 9rem;"">
-            <button type="submit" class="btn btn-primary">Create post</button>
+            <button type=" submit" class="btn btn-primary">Create post</button>
         </div>
 
     </form>
@@ -114,11 +115,75 @@
 @endsection
 @push('stylesheets')
     <link rel="stylesheet" href="{{ asset('back/src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css') }}">
+
+    <style>
+        .ck-editor__editable {
+            min-height: 250px;
+        }
+    </style>
 @endpush
 @push('scripts')
+
     <script src="{{ asset('back/src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js') }}"></script>
+    {{--
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script> --}}
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/super-build/ckeditor.js"></script>
 
     <script>
+
+        let editorInstance;
+
+
+        CKEDITOR.ClassicEditor
+            .create(document.querySelector('#post_content'), {
+
+                removePlugins: [
+                    // Collaboration
+                    'RealTimeCollaborativeComments',
+                    'RealTimeCollaborativeTrackChanges',
+                    'RealTimeCollaborativeRevisionHistory',
+                    'PresenceList',
+                    'Comments',
+                    'TrackChanges',
+                    'TrackChangesData',
+                    'RevisionHistory',
+
+                    // Pagination & premium
+                    'Pagination',
+                    'WProofreader',
+
+                    // NEW errors you got (license-based)
+                    'AIAssistant',
+                    'MultiLevelList',
+                    'TableOfContents',
+                    'FormatPainter',
+                    'PasteFromOfficeEnhanced',
+                    'CaseChange',
+
+                    // Optional extras (safe to remove)
+                    'MathType',
+                    'SlashCommand',
+                    'Template',
+                    'DocumentOutline'
+                ],
+
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'bold', 'italic', 'underline', 'strikethrough', '|',
+                        'fontSize', 'fontColor', 'fontBackgroundColor', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'alignment', '|',
+                        'link', 'insertTable', 'uploadImage', '|',
+                        'blockQuote', 'codeBlock', '|',
+                        'undo', 'redo'
+                    ]
+                }
+            })
+            .then(editor => {
+                editorInstance = editor; //store the content from the ckeditor textarea here
+            })
+            .catch(error => console.error(error));
 
         //image preview for post thumbnail
         const upload_featured_image = document.querySelector("#featured_image");
@@ -165,39 +230,42 @@
         }
 
         //CREATE A POST (SUBMITING USING AJAX)
-        $('#addPostForm').on('submit', function(e) {
+        $('#addPostForm').on('submit', function (e) {
             e.preventDefault();
             var form = this;
+            var post_content = editorInstance.getData();
             var formdata = new FormData(form);
+            formdata.append('content', post_content);
 
             $.ajax({
-                url:$(form).attr('action'),
-                method:$(form).attr('method'),
-                data:formdata,
-                processData:false,
-                dataType:'json',
-                contentType:false,
-                beforeSend:function(){
+                url: $(form).attr('action'),
+                method: $(form).attr('method'),
+                data: formdata,
+                processData: false,
+                dataType: 'json',
+                contentType: false,
+                beforeSend: function () {
                     $(form).find('span.error-text').text('');
                 },
-                success:function(data){
-                    if(data.status == 1){
+                success: function (data) {
+                    if (data.status == 1) {
                         $(form)[0].reset();
+                        editorInstance.setData('');
                         $('img#featured_image_preview').attr('src', '');
                         $('input[name="tags"]').tagsinput('removeAll');
                         Livewire.dispatch('showAlert', [{
                             type: 'success',
                             message: data.message
                         }]);
-                    }else{
+                    } else {
                         Livewire.dispatch('showAlert', [{
                             type: 'error',
                             message: data.message
                         }]);
                     }
                 },
-                error:function(data){
-                    $.each(data.responseJSON.errors, function(prefix, val){
+                error: function (data) {
+                    $.each(data.responseJSON.errors, function (prefix, val) {
                         $(form).find('span.' + prefix + '_error').text(val[0]);
                     });
                 }

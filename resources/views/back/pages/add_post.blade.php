@@ -40,7 +40,7 @@
                         </div>
                         <div class="form-group">
                             <label for="post_content"><b>Content</b>:</label>
-                            <textarea class="form-control" name="post_content" id="post_content" cols="30" rows="10"
+                            <textarea class="ckeditor form-control" name="post_content" id="post_content" cols="30" rows="10"
                                 placeholder="Enter post content here...."></textarea>
                             <span class="text-danger error-text post_content_error"></span>
                         </div>
@@ -116,74 +116,15 @@
 @push('stylesheets')
     <link rel="stylesheet" href="{{ asset('back/src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css') }}">
 
-    <style>
-        .ck-editor__editable {
-            min-height: 250px;
-        }
-    </style>
+
 @endpush
 @push('scripts')
 
     <script src="{{ asset('back/src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js') }}"></script>
-    {{--
-    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script> --}}
-    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/super-build/ckeditor.js"></script>
+    <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
+
 
     <script>
-
-        let editorInstance;
-
-
-        CKEDITOR.ClassicEditor
-            .create(document.querySelector('#post_content'), {
-
-                removePlugins: [
-                    // Collaboration
-                    'RealTimeCollaborativeComments',
-                    'RealTimeCollaborativeTrackChanges',
-                    'RealTimeCollaborativeRevisionHistory',
-                    'PresenceList',
-                    'Comments',
-                    'TrackChanges',
-                    'TrackChangesData',
-                    'RevisionHistory',
-
-                    // Pagination & premium
-                    'Pagination',
-                    'WProofreader',
-
-                    // NEW errors you got (license-based)
-                    'AIAssistant',
-                    'MultiLevelList',
-                    'TableOfContents',
-                    'FormatPainter',
-                    'PasteFromOfficeEnhanced',
-                    'CaseChange',
-
-                    // Optional extras (safe to remove)
-                    'MathType',
-                    'SlashCommand',
-                    'Template',
-                    'DocumentOutline'
-                ],
-
-                toolbar: {
-                    items: [
-                        'heading', '|',
-                        'bold', 'italic', 'underline', 'strikethrough', '|',
-                        'fontSize', 'fontColor', 'fontBackgroundColor', '|',
-                        'bulletedList', 'numberedList', '|',
-                        'alignment', '|',
-                        'link', 'insertTable', 'uploadImage', '|',
-                        'blockQuote', 'codeBlock', '|',
-                        'undo', 'redo'
-                    ]
-                }
-            })
-            .then(editor => {
-                editorInstance = editor; //store the content from the ckeditor textarea here
-            })
-            .catch(error => console.error(error));
 
         //image preview for post thumbnail
         const upload_featured_image = document.querySelector("#featured_image");
@@ -233,9 +174,9 @@
         $('#addPostForm').on('submit', function (e) {
             e.preventDefault();
             var form = this;
-            var post_content = editorInstance.getData();
+            var post_content = CKEDITOR.instances.post_content.getData();
             var formdata = new FormData(form);
-            formdata.append('content', post_content);
+            formdata.append('post_content', post_content);
 
             $.ajax({
                 url: $(form).attr('action'),
@@ -250,7 +191,7 @@
                 success: function (data) {
                     if (data.status == 1) {
                         $(form)[0].reset();
-                        editorInstance.setData('');
+                        CKEDITOR.instances.post_content.setData('');
                         $('img#featured_image_preview').attr('src', '');
                         $('input[name="tags"]').tagsinput('removeAll');
                         Livewire.dispatch('showAlert', [{

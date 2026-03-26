@@ -37,5 +37,15 @@ class Post extends Model
         ];
     }
 
+    public function author()
+    {
+        return $this->hasOne(User::class, 'id', 'author_id');
+    }
+
+    public function post_category()
+    {
+        return $this->hasOne(Category::class, 'id', 'category');
+    }
+
 
 }

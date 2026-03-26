@@ -373,7 +373,7 @@
     <script src="{{ asset('back/vendors/scripts/script.min.js') }}"></script>
     <script src="{{ asset('back/vendors/scripts/process.js') }}"></script>
     <script src="{{ asset('back/vendors/scripts/layout-settings.js') }}"></script>
-    <script src="{{ asset('extra-assets/jquery-ui/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('extra-assets/jquery-ui/jquery-ui.min.js') }}"></script>  {{-- jquery version is 1.14.0 --}}
     @kropifyScripts
     <script>
         // Script for the toast notification to lostern for the showAlert event (livewire))

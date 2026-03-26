@@ -83,7 +83,6 @@ class PostController extends Controller
                 $image2 = $manager->read($path.$new_filename);
                 $image2->cover(512, 320)->save($resized_path.'resized_'.$new_filename);
 
-               
                 $post = new Post;
                 $post->author_id = auth()->id();
                 $post->category = $request->category;
@@ -106,4 +105,14 @@ class PostController extends Controller
             }
         }
     }
+
+    public function allPosts()
+    {
+        $data = [
+            'pageTitle' => 'Posts'
+        ];
+
+        return view('back.pages.all_posts', $data);
+    }
+
 }

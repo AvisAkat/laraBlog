@@ -67,4 +67,9 @@ class User extends Authenticatable
     public function social_links(){
         return $this->belongsTo(UserSocialLink::class, 'id', 'user_id');
     }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'author_id', 'id');
+    }
 }

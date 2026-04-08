@@ -29,3 +29,14 @@
     @livewire('admin.posts')
 
 @endsection
+@push('scripts')
+    <script>
+        //Delete item from posts table
+        window.addEventListener('showDeleteConfirmationModal', function(event) {
+            $('#delete_confirmation_modal').modal('show');
+        });
+        window.addEventListener('hideDeleteConfirmationModal', function(event) {
+            $('#delete_confirmation_modal').modal('hide');
+        });
+    </script>
+@endpush

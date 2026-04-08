@@ -268,17 +268,24 @@ new class extends Component {
         $category = Category::findOrFail($id);
 
         //Check if this category has related post(S)
-
-        //delete category
-        $deleted = $category->delete();
-
-        if ($deleted) {
+        if ($category->posts->count() > 0) {
+            $count = $category->posts->count();
             $this->dispatch('hideDeleteConfirmationModal');
-            $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Category deleted successfully!']);
+            $this->dispatch('showAlert', ['type' => 'error', 'message' => 'This category has ('.$count.') related post(s). Cannot be deleted.']);
         } else {
-            $this->dispatch(('hideDeleteConfirmationModal'));
-            $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Something went wrong.']);
+            //delete category
+            $deleted = $category->delete();
+
+            if ($deleted) {
+                $this->dispatch('hideDeleteConfirmationModal');
+                $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Category deleted successfully!']);
+            } else {
+                $this->dispatch(('hideDeleteConfirmationModal'));
+                $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Something went wrong.']);
+            }
         }
+
+
     }
 
 
@@ -390,7 +397,7 @@ new class extends Component {
                                     <td>
                                         {{ !is_null($item->parent_category) ? $item->parent_category->name : '-'  }}
                                     </td>
-                                    <td>-</td>
+                                    <td>{{ $item->posts->count() }}</td>
                                     <td>
                                         <div class="table-actions">
                                             <a href="javascript:;" wire:click="editCategory({{ $item->id }})"

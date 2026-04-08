@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-md-6 col-sm-12">
                 <div class="title">
-                    <h4>Add Post</h4>
+                    <h4>Edit Post</h4>
                 </div>
                 <nav aria-label="breadcrumb" role="navigation">
                     <ol class="breadcrumb">
@@ -14,10 +14,10 @@
                             <a href="{{ route('admin.dashboard') }}">Home</a>
                         </li>
                         <li class="breadcrumb-item">
-                            <a href="{{ route('admin.posts') }}">All Posts</a>
+                            <a href="{{ route('admin.posts') }}">All Post</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
-                            Add Post
+                            Edit Post
                         </li>
                     </ol>
                 </nav>
@@ -28,8 +28,8 @@
         </div>
     </div>
 
-    <form action="{{ route('admin.create_post') }}" method="POST" autocomplete="off" enctype="multipart/form-data"
-        id="addPostForm">
+    <form action="{{ route('admin.update_post', ['post_id' => $post->id]) }}" method="POST" autocomplete="off" enctype="multipart/form-data"
+        id="updatePostForm">
         @csrf
 
         <div class="row">
@@ -38,13 +38,13 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for=""><b>Title</b>:</label>
-                            <input type="text" name="title" id="" placeholder="Enter post title" class="form-control">
+                            <input type="text" name="title" id="" value="{{ $post->title }}" placeholder="Enter post title" class="form-control">
                             <span class="text-danger error-text title_error"></span>
                         </div>
                         <div class="form-group">
                             <label for="post_content"><b>Content</b>:</label>
                             <textarea class="ckeditor form-control" name="post_content" id="post_content" cols="30" rows="10"
-                                placeholder="Enter post content here...."></textarea>
+                                placeholder="Enter post content here....">{!! $post->content !!}</textarea>
                             <span class="text-danger error-text post_content_error"></span>
                         </div>
 
@@ -55,13 +55,13 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for=""><b>Post meta keywords</b>: <small>(separated by comma.)</small></label>
-                            <input type="text" name="meta_keywords" id="" placeholder="Enter post meta keywords"
+                            <input type="text" name="meta_keywords" id="" value="{{ $post->meta_keywords }}" placeholder="Enter post meta keywords"
                                 class="form-control">
                         </div>
                         <div class="form-group">
                             <label for=""><b>Post meta description</b>:</label>
                             <textarea name="meta_description" id="" cols="30" rows="10"
-                                placeholder="Enter post meta description...." class="form-control"></textarea>
+                                placeholder="Enter post meta description...." class="form-control">{{ $post->meta_description }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -72,7 +72,6 @@
                         <div class="form-group">
                             <label for=""><b>Post Category</b>:</label>
                             <select name="category" id="" class="custom-select form-control">
-                                <option value="">Choose...</option>
                                 {!! $categories_html !!}
                             </select>
                             <span class="text-danger error-text category_error"></span>
@@ -84,23 +83,23 @@
                             <span class="text-danger error-text featured_image_error"></span>
                         </div>
                         <div class="d-block mb-3" style="max-width: 250px;">
-                            <img src="" alt="" class="img-thumbnail" id="featured_image_preview">
+                            <img src="{{ asset('images/posts/resized/resized_').$post->featured_image }}" alt="" class="img-thumbnail" id="featured_image_preview">
                         </div>
                         <div class="form-group mb-3">
                             <label for=""><b>Tags</b>:</label>
-                            <input type="text" name="tags" id="" class="form-control" data-role="tagsinput">
+                            <input type="text" name="tags" id="" value="{{ $post->tags }}" class="form-control" data-role="tagsinput">
                         </div>
                         <hr>
                         <div class="form-group">
                             <label for=""><b>Visibility</b>:</label>
                             <div class="custom-control custom-radio mb-5">
                                 <input type="radio" name="visibility" id="customRadio1" class="custom-control-input"
-                                    value="1" checked>
+                                    value="1" {{ $post->visibility == 1 ? 'checked' : '' }}>
                                 <label for="customRadio1" class="custom-control-label">Public</label>
                             </div>
                             <div class="custom-control custom-radio mb-5">
                                 <input type="radio" name="visibility" id="customRadio2" class="custom-control-input"
-                                    value="0">
+                                    value="0" {{ $post->visibility == 0 ? 'checked' : '' }}>
                                 <label for="customRadio2" class="custom-control-label">Private</label>
                             </div>
                         </div>
@@ -110,7 +109,7 @@
         </div>
 
         <div class="card-box p-2 mb-3 text-center" style="min-width: 8rem; max-width: 9rem;"">
-            <button type=" submit" class="btn btn-primary">Create post</button>
+            <button type=" submit" class="btn btn-primary">Update post</button>
         </div>
 
     </form>
@@ -173,8 +172,8 @@
             img.src = objectURL;
         }
 
-        //CREATE A POST (SUBMITING USING AJAX)
-        $('#addPostForm').on('submit', function (e) {
+        //UPDATE A POST (SUBMITING USING AJAX)
+        $('#updatePostForm').on('submit', function (e) {
             e.preventDefault();
             var form = this;
             var post_content = CKEDITOR.instances.post_content.getData();
@@ -194,9 +193,9 @@
                 success: function (data) {
                     if (data.status == 1) {
                         $(form)[0].reset();
-                        CKEDITOR.instances.post_content.setData('');
-                        $('img#featured_image_preview').attr('src', '');
-                        $('input[name="tags"]').tagsinput('removeAll');
+                        // CKEDITOR.instances.post_content.setData('');
+                        // $('img#featured_image_preview').attr('src', '');
+                        // $('input[name="tags"]').tagsinput('removeAll');
                         Livewire.dispatch('showAlert', [{
                             type: 'success',
                             message: data.message

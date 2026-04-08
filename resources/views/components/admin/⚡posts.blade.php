@@ -5,10 +5,14 @@ use App\Models\Post;
 use Livewire\WithPagination;
 use App\Models\ParentCategory;
 use App\Models\Category;
+use Illuminate\Support\Facades\File;
 
 new class extends Component {
 
     use WithPagination;
+
+    //Delte Post and Post Modal info
+    public $delete_id, $delete_function_name, $delete_name;
 
     public $postPerPage = 3;
 
@@ -55,62 +59,112 @@ new class extends Component {
         //Prepare categories selection
         $categories_html = '';
 
-        $pcategories = ParentCategory::whereHas('children', function($q){
+        $pcategories = ParentCategory::whereHas('children', function ($q) {
             $q->whereHas('posts');
-        })->orderBy('name','asc')->get(); 
+        })->orderBy('name', 'asc')->get();
 
         $categories = Category::whereHas('posts')->where('parent', 0)->orderBy('name', 'asc')->get();
 
-        if( count($pcategories) > 0 ){
-            foreach( $pcategories as $item ){
-                $categories_html.='<optgroup label="'.$item->name.'">';
-                    foreach( $item->children as $category ){
-                        if( $category->posts->count() > 0 ){
-                            $categories_html.='<option value="'.$category->id.'">'.$category->name.'</option>';
-                        }
+        if (count($pcategories) > 0) {
+            foreach ($pcategories as $item) {
+                $categories_html .= '<optgroup label="' . $item->name . '">';
+                foreach ($item->children as $category) {
+                    if ($category->posts->count() > 0) {
+                        $categories_html .= '<option value="' . $category->id . '">' . $category->name . '</option>';
                     }
-                $categories_html.='</optgroup>';
+                }
+                $categories_html .= '</optgroup>';
             }
         }
 
-        if( count($categories) > 0 ){
-            foreach( $categories as $item ){
-                $categories_html.='<option value="'.$item->id.'">'.$item->name.'</option>';
+        if (count($categories) > 0) {
+            foreach ($categories as $item) {
+                $categories_html .= '<option value="' . $item->id . '">' . $item->name . '</option>';
             }
         }
         return $categories_html;
     }
-    
+
 
     //fetch all post
     public function allPosts()
     {
+
+        // //when super admin opens all post only his post should show by default
+        // $this->author = auth()->user()->type == "superAdmin" ? auth()->user()->id : '';
+
         return auth()->user()->type == "superAdmin" ?
             Post::search(trim($this->search))
-                ->when($this->author, function($query){
+                ->when($this->author, function ($query) {
                     $query->where('author_id', $this->author);
                 })
-                ->when($this->category, function($query){
-                    $query->where('category',$this->category);
+                ->when($this->category, function ($query) {
+                    $query->where('category', $this->category);
                 })
-                ->when($this->visibility, function($query){
+                ->when($this->visibility, function ($query) {
                     $query->where('visibility', $this->visibility == 'public' ? 1 : 0);
                 })
                 ->orderBy('id', $this->sortBy)
-                ->paginate($this->postPerPage) : 
+                ->paginate($this->postPerPage)
+
+            :
+
             Post::search(trim($this->search))
-                ->when($this->author, function($query){
+                ->when($this->author, function ($query) {
                     $query->where('author_id', $this->author);
                 })
-                ->when($this->category, function($query){
-                    $query->where('category',$this->category);
+                ->when($this->category, function ($query) {
+                    $query->where('category', $this->category);
                 })
-                ->when($this->visibility, function($query){
+                ->when($this->visibility, function ($query) {
                     $query->where('visibility', $this->visibility == 'public' ? 1 : 0);
                 })
                 ->where('author_id', auth()->id())
                 ->orderBy('id', $this->sortBy)
                 ->paginate($this->postPerPage);
+    }
+
+    public function showPostDeleteConfirmationModal($id)
+    {
+        $this->delete_id = $id;
+        $this->delete_function_name = 'deletePost';
+        $this->delete_name = 'Post';
+        $this->dispatch('showDeleteConfirmationModal');
+    }
+
+    public function deletePost($id)
+    {
+        $post = Post::findOrFail($id);
+        $path = 'images/posts/';
+        $resized_path = $path.'resized/';
+        $old_featured_image = $post->featured_image;
+
+        //Delete featured image
+        if( $old_featured_image != "" && File::exists(public_path($path.$old_featured_image)) ){
+            File::delete(public_path($path.$old_featured_image));
+            
+            //Delete Resized Image
+            if( File::exists(public_path($resized_path.'resized_'.$old_featured_image)) ){
+                File::delete(public_path($resized_path.'resized_'.$old_featured_image));
+            }
+            //Delete Thumbnail Image
+            if( File::exists(public_path($resized_path.'thumb_'.$old_featured_image)) ){
+                File::delete(public_path($resized_path.'thumb_'.$old_featured_image));
+            }
+        }
+
+        //Delete Post from DB
+        $delete = $post->delete();
+
+        if($delete){
+            $this->dispatch(('hideDeleteConfirmationModal'));
+            $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Post has been deleted sucessfully']);
+        }else{
+            $this->dispatch(('hideDeleteConfirmationModal'));
+            $this->dispatch('showAlert', ['type' => 'error', 'message' => 'Something went wrong.']);
+        }
+
+
     }
 
 };
@@ -186,17 +240,19 @@ new class extends Component {
                                         <i class="icon-copy ti-world"></i> Public
                                     </span>
                                 @else
-                                    <span class="badge badge-pill badge-success">
+                                    <span class="badge badge-pill badge-warning">
                                         <i class="icon-copy ti-lock"></i> Private
                                     </span>
                                 @endif
                             </td>
                             <td>
                                 <div class="table-actions">
-                                    <a href="" data-color="#265ed7" style="color: rgb(38, 94, 215)">
+                                    <a href="{{ route('admin.edit_post', ['id' => $item->id]) }}" data-color="#265ed7"
+                                        style="color: rgb(38, 94, 215)">
                                         <i class="icon-copy dw dw-edit2"></i>
                                     </a>
-                                    <a href="" data-color="#e95959" style="color: rgb(233, 89, 89)">
+                                    <a href="javascript:;" wire:click="showPostDeleteConfirmationModal({{ $item->id }})"
+                                        data-color="#e95959" style="color: rgb(233, 89, 89)">
                                         <i class="icon-copy dw dw-delete-3"></i>
                                     </a>
                                 </div>
@@ -214,4 +270,14 @@ new class extends Component {
             {{ $this->allPosts()->links('livewire::simple-bootstrap') }}
         </div>
     </div>
+
+    {{-- Delete confirmation modal --}}
+    @component('components.delete-confirmation-modal', [
+        'delete_id' => $delete_id,
+        'delete_function_name' => $delete_function_name,
+        'delete_name' => $delete_name
+    ])
+    
+    @endcomponent
+{{-- Delete Modal End --}}
 </div>

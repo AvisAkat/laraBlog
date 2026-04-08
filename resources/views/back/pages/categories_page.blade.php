@@ -62,7 +62,7 @@
             }
         });
 
-        //Delete item from parent Category table
+        //Delete item from Parent Category and Category table
         window.addEventListener('showDeleteConfirmationModal', function(event) {
             $('#delete_confirmation_modal').modal('show');
         });

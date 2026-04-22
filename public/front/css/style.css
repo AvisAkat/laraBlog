@@ -103,14 +103,40 @@ img {
     justify-content: space-between;
 }
 
-.logo {
-    font-size: 1.6rem;
-    font-weight: 800;
-    background: var(--gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: -0.5px;
+.header-inner .brand-logo{
+	width: 280px;
+	height: 70px;
+}
+
+.header-inner .brand-logo a{
+	display: flex;
+	vertical-align: middle;
+	align-items: center;
+	position: relative;
+	height: 100%;
+	font-size: 22px;
+	color: #ffffff;
+	letter-spacing: 0.050em;
+	font-weight: 500;
+	line-height: 45px;
+	font-family: 'Inter', sans-serif;
+	padding: 0px 20px 0px;
+}
+.header-inner .brand-logo a .dark-logo,
+.sidebar-light .brand-logo a .light-logo{
+	display: none;
+}
+.header-inner .brand-logo a .light-logo,
+.sidebar-light .brand-logo a .dark-logo
+{
+	display: block;
+}
+
+.header-inner .brand-logo a img,
+.header-inner .brand-logo a .svg{
+	max-width: 180px;
+	display: block;
+	height: auto;
 }
 
 .nav {
@@ -659,6 +685,42 @@ img {
 .footer-links a:hover {
     opacity: 1;
     color: #fff;
+}
+
+.footer .brand-logo{
+	width: 260px;
+	height: 80px;
+}
+
+.footer .brand-logo a{
+	display: flex;
+	vertical-align: middle;
+	align-items: center;
+	position: relative;
+	height: 100%;
+	font-size: 22px;
+	color: #ffffff;
+	letter-spacing: 0.050em;
+	font-weight: 500;
+	line-height: 45px;
+	font-family: 'Inter', sans-serif;
+	padding: 0px 20px 0px;
+}
+.footer .brand-logo a .dark-logo,
+.sidebar-light .brand-logo a .light-logo{
+	display: none;
+}
+.footer .brand-logo a .light-logo,
+.sidebar-light .brand-logo a .dark-logo
+{
+	display: block;
+}
+
+.footer .brand-logo a img,
+.footer .brand-logo a .svg{
+	max-width: 180px;
+	display: block;
+	height: auto;
 }
 
 .footer-bottom {

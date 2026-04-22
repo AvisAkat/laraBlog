@@ -22,10 +22,18 @@
     <!-- ===== HEADER ===== -->
     <header class="header">
         <div class="header-inner">
-            <a href="index.html" class="logo">BlogVerse</a>
+            {{-- <a href="/" class="logo">BlogVerse</a> --}}
+            <div class="brand-logo">
+                <a href="/">
+                    <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt=""
+                        class="dark-logo site_logo" />
+                    <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt=""
+                        class="light-logo site_logo" />
+                </a>
+            </div>
             <button class="menu-toggle" onclick="document.querySelector('.nav').classList.toggle('open')">☰</button>
             <nav class="nav">
-                <a href="index.html" class="active">Home</a>
+                <a href="/" class="active">Home</a>
                 <a href="articles.html">Articles</a>
                 <a href="about.html">About Us</a>
                 <a href="contact.html">Contact</a>
@@ -42,14 +50,23 @@
     <main>
         @yield('content')
     </main>
-    {{-- ========== PAGE CONTENT END =========  --}}
+    {{-- ========== PAGE CONTENT END ========= --}}
     <!-- ===== FOOTER ===== -->
     <footer class="footer">
         <div class="footer-grid">
             <div class="footer-brand">
-                <a href="index.html" class="logo">BlogVerse</a>
-                <p>A modern blog platform for thinkers, creators, and innovators. Sharing knowledge, one article at a
-                    time.</p>
+                {{-- <a href="index.html" class="logo">BlogVerse</a> --}}
+                <div class="brand-logo">
+                <a href="/">
+                    <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt="{{ isset(settings()->site_title) ? settings()->site_title : '' }}"
+                        class="dark-logo site_logo" />
+                    <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt="{{ isset(settings()->site_title) ? settings()->site_title : '' }}"
+                        class="light-logo site_logo" />
+                </a>
+            </div>
+                <p>
+                    {{ isset(settings()->site_meta_description) ? settings()->site_meta_description : '' }}
+                </p>
                 <div class="social-links" style="margin-top: 20px;">
                     <a href="#" aria-label="Twitter">𝕏</a>
                     <a href="#" aria-label="GitHub">⌨</a>
@@ -60,7 +77,7 @@
             <div>
                 <h4>Quick Links</h4>
                 <ul class="footer-links">
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="/">Home</a></li>
                     <li><a href="articles.html">All Articles</a></li>
                     <li><a href="about.html">About Us</a></li>
                     <li><a href="contact.html">Contact</a></li>

@@ -3,15 +3,33 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\BlogController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('front.pages.front-example');
+
+/**
+ * FRONTENE ROUTES
+*/
+
+Route::controller(BlogController::class)->group(function () {
+    Route::get('/', 'index')->name('blog.home');
+    Route::get('/post/{slug}', 'readPost')->name('blog.read_post');
+    Route::get('/posts/category/{slug}', 'categoryPosts')->name('blog.category_posts');
+    Route::get('/posts/parent-category/{slug}', 'parentCategoryPosts')->name('blog.parent_category_posts');
+    Route::get('/posts/author/{username}', 'authorPosts')->name('blog.author_posts');
+    Route::get('/posts/tag/{any}', 'tagPosts')->name('blog.tag_posts');
+    Route::get('/search', 'searchPosts')->name('blog.search_posts');
 });
 
 // TESTING ROUTES
 Route::view('/example-page', 'example-page');
 Route::view('/example-auth', 'example-auth');
+
+
+
+/**
+ * BACKENED ROUTES
+*/
 
 // ADMIN ROUTES
 Route::prefix('admin')->name('admin.')->group(function () {

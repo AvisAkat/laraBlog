@@ -264,7 +264,7 @@
 
     <div class="left-side-bar">
         <div class="brand-logo">
-            <a href="/">
+            <a href="{{ route('admin.dashboard') }}">
                 {{-- <img src="{{ asset('back/vendors/images/deskapp-logo.svg') }}" alt="" class="dark-logo" />
                 <img src="{{ asset('back/vendors/images/deskapp-logo-white.svg') }}" alt="" class="light-logo" /> --}}
                 <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt=""

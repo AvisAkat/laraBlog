@@ -1,7 +1,8 @@
 /* ===== CSS VARIABLES ===== */
 :root {
     --primary: #0025cc;
-    --accent: #cc007e;
+    --secondary: #be5897;
+    --accent: #cc007e8b;
     --gradient: linear-gradient(135deg, var(--primary), var(--accent));
 }
 
@@ -363,6 +364,7 @@ img {
     margin: 16px auto 0;
 }
 
+
 /* ===== ARTICLE CARDS ===== */
 .articles-grid-home {
     display: grid;
@@ -418,6 +420,11 @@ img {
 .articles-grid-home .tag-accent {
     background: rgba(204, 0, 126, 0.1);
     color: var(--accent);
+}
+
+.articles-grid-home .author-tag {
+    font-size: 0.8rem;
+    color: var(--text-muted);
 }
 
 .articles-grid-home .date {
@@ -539,6 +546,55 @@ img {
     margin-bottom: 24px;
     font-size: 1rem;
 }
+
+.featured-card .article-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.featured-card .tag {
+    padding: 4px 12px;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.featured-card .tag-accent {
+    background: rgba(204, 0, 126, 0.1);
+    color: var(--accent);
+}
+
+.featured-card .author-tag {
+    font-size: 0.9rem;
+    color: var(--secondary);
+    text-transform: capitalize;
+}
+
+.featured-card .author-tag:hover {
+    color: var(--accent);
+}
+
+.featured-card .date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+    
+.featured-card .read-time {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.featured-card h3 a:hover {
+    color: var(--primary);
+}
+
 
 /* ===== NEWSLETTER ===== */
 .newsletter {

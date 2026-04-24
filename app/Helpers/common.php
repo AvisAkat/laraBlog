@@ -18,10 +18,18 @@ if (! function_exists('settings')) {
  * DATE FORMAT eg. March 15, 2024
  */
 if (! function_exists('date_formatter')) {
-    function date_formatter($value)
+    function date_formatter($value, $format = 'long')
     {
         try {
-            return Carbon::parse($value)->translatedFormat('F j, Y');
+            if ($format === 'long') {
+                $format = 'F j, Y';
+            } elseif ($format === 'short') {
+                $format = 'M j, Y';
+            } else {
+                $format = 'F j, Y'; // Default to long format if an unrecognized format is provided
+            }
+
+            return Carbon::parse($value)->translatedFormat($format);
         } catch (\Exception $e) {
             return null; // or return $value;
         }

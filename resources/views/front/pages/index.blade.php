@@ -31,9 +31,7 @@
         @if (!empty($featuredPost))
 
             <div class="featured-card">
-                <img class="featured-card-img"
-                    {{-- src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=500&fit=crop" --}}
-                    src="{{ asset('images/posts') . '/' . $featuredPost->featured_image }}"
+                <img class="featured-card-img" src="{{ asset('images/posts') . '/' . $featuredPost->featured_image }}"
                     alt="Team working on technology">
                 <div class="featured-card-body">
                     <div class="article-card-meta">
@@ -98,107 +96,48 @@
 
         <div class="articles-grid-home">
 
-            <!-- Card 1 -->
-            <article class="article-card">
-                <img class="article-card-img"
-                    src="https://images.unsplash.com/photo-1559028012-481c04fa702d?w=600&h=400&fit=crop"
-                    alt="Design workspace">
-                <div class="article-card-body">
-                    <div class="article-card-meta">
-                        <span class="tag">Design</span>
-                        <span class="date">Dec 12, 2025</span>
-                    </div>
-                    <h3><a href="article.html">Mastering UI Design: Principles Every Designer Should Know</a></h3>
-                    <p>Learn the fundamental principles of UI design that will elevate your work from good to exceptional.
-                        From color theory to typography, we cover it all.</p>
-                    <a href="article.html" class="read-more">Read More <span class="arrow">→</span></a>
-                </div>
-            </article>
+            @if (!empty($latestPost))
+                @foreach ($latestPost as $post)
 
-            <!-- Card 2 -->
-            <article class="article-card">
-                <img class="article-card-img"
-                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop"
-                    alt="Business analytics">
-                <div class="article-card-body">
-                    <div class="article-card-meta">
-                        <span class="tag tag-accent">Business</span>
-                        <span class="date">Dec 10, 2025</span>
-                    </div>
-                    <h3><a href="article.html">Building a Successful Startup: Lessons From Silicon Valley</a></h3>
-                    <p>What separates successful startups from the rest? We interviewed 50 founders to uncover the patterns
-                        and strategies that lead to sustainable growth.</p>
-                    <a href="article.html" class="read-more">Read More <span class="arrow">→</span></a>
-                </div>
-            </article>
+                    <article class="article-card">
+                        <a href="{{ route('blog.read_post', $post->slug) }}">
+                            <img class="article-card-img" src="{{ asset('/images/posts') . '/' . $post->featured_image }}"
+                                alt="Design workspace">
+                        </a>
+                        <div class="article-card-body">
+                            <div class="article-card-meta">
+                                <a href="{{ route('blog.category_posts', $post->post_category->slug) }}">
+                                    <span class="tag">{{ $post->post_category->name }}</span>
+                                </a>
+                                <span class="date"><i class="icon-copy ion-calendar"></i>
+                                    {{ date_formatter($post->created_at, 'short') }}</span>
+                                <span class="read-time">|&nbsp;&nbsp;
+                                    <i class="icon-copy ion-clock"></i>
+                                    {{ readingDuration($post->title, $post->content) }}
+                                    @choice('min|mins', readingDuration($post->title, $post->content))
+                                </span>
+                            </div>
+                            <h3>
+                                <a href="{{ route('blog.read_post', $post->slug) }}">
+                                    {{ $post->title }}
+                                </a>
+                            </h3>
+                            <p>
+                                {!!Str::ucfirst(strip_words($post->content, 21)) !!}
+                            </p>
+                            <div style="margin-top: -16px;margin-bottom: 5px">
+                                <a href="{{ route('blog.author_posts', $featuredPost->author->username) }}">
+                                    <span class="author-tag">{{ $featuredPost->author->name }}</span>
+                                </a>
+                            </div>
+                            <a href="{{ route('blog.read_post', $post->slug) }}" class="read-more">Read More <span
+                                    class="arrow">→</span></a>
+                        </div>
+                    </article>
 
-            <!-- Card 3 -->
-            <article class="article-card">
-                <img class="article-card-img"
-                    src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&h=400&fit=crop"
-                    alt="Coding workspace">
-                <div class="article-card-body">
-                    <div class="article-card-meta">
-                        <span class="tag">Technology</span>
-                        <span class="date">Dec 8, 2025</span>
-                    </div>
-                    <h3><a href="article.html">The Rise of WebAssembly: A New Era for Web Development</a></h3>
-                    <p>WebAssembly is changing how we think about web applications. Explore how this technology enables
-                        near-native performance in the browser.</p>
-                    <a href="article.html" class="read-more">Read More <span class="arrow">→</span></a>
-                </div>
-            </article>
+                @endforeach
+            @endif
 
-            <!-- Card 4 -->
-            <article class="article-card">
-                <img class="article-card-img"
-                    src="https://images.unsplash.com/photo-1545239351-ef35f43d514b?w=600&h=400&fit=crop"
-                    alt="Nature landscape">
-                <div class="article-card-body">
-                    <div class="article-card-meta">
-                        <span class="tag tag-accent">Science</span>
-                        <span class="date">Dec 5, 2025</span>
-                    </div>
-                    <h3><a href="article.html">Climate Tech Innovations That Could Save Our Planet</a></h3>
-                    <p>From carbon capture to renewable energy breakthroughs, discover the technologies that give us hope in
-                        the fight against climate change.</p>
-                    <a href="article.html" class="read-more">Read More <span class="arrow">→</span></a>
-                </div>
-            </article>
-
-            <!-- Card 5 -->
-            <article class="article-card">
-                <img class="article-card-img"
-                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop"
-                    alt="Team collaboration">
-                <div class="article-card-body">
-                    <div class="article-card-meta">
-                        <span class="tag">Lifestyle</span>
-                        <span class="date">Dec 3, 2025</span>
-                    </div>
-                    <h3><a href="article.html">Remote Work Revolution: How to Stay Productive Anywhere</a></h3>
-                    <p>The remote work era is here to stay. Learn proven strategies for maintaining focus, work-life
-                        balance, and collaboration from anywhere in the world.</p>
-                    <a href="article.html" class="read-more">Read More <span class="arrow">→</span></a>
-                </div>
-            </article>
-
-            <!-- Card 6 -->
-            <article class="article-card">
-                <img class="article-card-img"
-                    src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop"
-                    alt="Developer working">
-                <div class="article-card-body">
-                    <div class="article-card-meta">
-                        <span class="tag">Technology</span>
-                        <span class="date">Dec 1, 2025</span>
-                    </div>
-                    <h3><a href="article.html">Understanding Modern CSS: Grid, Flexbox, and Beyond</a></h3>
-                    <p>CSS has evolved dramatically. This comprehensive guide covers modern layout techniques, animations,
-                        and responsive design patterns you need to know.</p>
-                    <a href="article.html" class="read-more">Read More <span class="arrow">→</span></a>
-                </div>
-            </article>
 
         </div>
 

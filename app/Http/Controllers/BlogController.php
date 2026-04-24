@@ -32,20 +32,23 @@ class BlogController extends Controller
         SEOTools::twitter()->setUrl($currentUrl);
         SEOTools::twitter()->setSite('@ScribbleDiary');
 
-        // $featured_post = Post::skip(0)
-        //     ->limit(1)
-        //     ->where('visibility', 1)
-        //     ->orderByDesc('created_at')
-        //     ->get();
-
         //Get the most recent post
         $featured_post = Post::where('visibility', 1)
                 ->orderByDesc('created_at')
                 ->first();
+      
+        //Get the latest post
+        $latest_post = Post::skip(1)
+            ->limit(6)
+            ->where('visibility', 1)
+            ->orderByDesc('created_at')
+            ->get();
+
 
         $data = [
             'pageTitle' => $title,
             'featuredPost' => $featured_post,
+            'latestPost' => $latest_post,
         ];
 
         return view('front.pages.index', $data);

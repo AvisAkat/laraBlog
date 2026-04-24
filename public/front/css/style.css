@@ -424,10 +424,20 @@ img {
 
 .articles-grid-home .author-tag {
     font-size: 0.8rem;
-    color: var(--text-muted);
+    color: var(--secondary);
+    text-transform: capitalize;
+}
+
+.articles-grid-home .author-tag:hover {
+    color: var(--accent);
 }
 
 .articles-grid-home .date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.articles-grid-home .read-time {
     font-size: 0.8rem;
     color: var(--text-muted);
 }

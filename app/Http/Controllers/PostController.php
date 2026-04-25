@@ -53,7 +53,7 @@ class PostController extends Controller
             'featured_image' => 'required|mimes:png,jpg,jpeg|max:1024',
         ], [
 
-            'post_content.required' => 'Content fileld is required.',
+            'post_content.required' => 'Content field is required.',
         ]);
 
         // create post
@@ -83,16 +83,38 @@ class PostController extends Controller
                 $image2 = $manager->read($path.$new_filename);
                 $image2->cover(512, 320)->save($resized_path.'resized_'.$new_filename);
 
-                $post = new Post;
-                $post->category = $request->category;
-                $post->title = $request->title;
-                $post->content = $request->post_content;
-                $post->featured_image = $new_filename;
-                $post->tags = $request->tags;
-                $post->meta_keywords = $request->meta_keywords;
-                $post->meta_description = $request->meta_description;
-                $post->visibility = $request->visibility;
-                $saved = $post->save();
+                try {
+                    $post = new Post;
+                    $post->author_id = auth()->id();
+                    $post->category = $request->category;
+                    $post->title = $request->title;
+                    $post->content = $request->post_content;
+                    $post->featured_image = $new_filename;
+                    $post->tags = $request->tags;
+                    $post->meta_keywords = $request->meta_keywords;
+                    $post->meta_description = $request->meta_description;
+                    $post->visibility = $request->visibility;
+                    $saved = $post->save();
+
+                } catch (\Exception $e) {
+
+                    // Delete uploaded image if failed to add post to the DB
+                    if ($new_filename != null && File::exists(public_path($path.$new_filename))) {
+                        File::delete(public_path($path.$new_filename));
+
+                        // Delete resized image
+                        if (File::exists(public_path($resized_path.'resized_'.$new_filename))) {
+                            File::delete(public_path($resized_path.'resized_'.$new_filename));
+                        }
+
+                        // Delete thumbnail image
+                        if (File::exists(public_path($resized_path.'thumb_'.$new_filename))) {
+                            File::delete(public_path($resized_path.'thumb_'.$new_filename));
+                        }
+                    }
+
+                    return response()->json(['status' => 0, 'message' => 'Something went wrong.']);
+                }
 
                 if ($saved) {
                     return response()->json(data: ['status' => 1, 'message' => 'New post has been successfully created.']);
@@ -211,7 +233,7 @@ class PostController extends Controller
             }
         }
 
-        //Update Post in Database
+        // Update Post in Database
         $post->author_id = auth()->id();
         $post->category = $request->category;
         $post->title = $request->title;
@@ -224,10 +246,10 @@ class PostController extends Controller
         $post->visibility = $request->visibility;
         $saved = $post->save();
 
-        if( $saved ){
+        if ($saved) {
             return response()->json(['status' => 1, 'message' => 'Blog post has been successfully updated']);
-        }else{
-            return response()->json(['status'=>0,'message'=>'Something went wrong while updating a post.']);
+        } else {
+            return response()->json(['status' => 0, 'message' => 'Something went wrong while updating a post.']);
         }
     }
 }

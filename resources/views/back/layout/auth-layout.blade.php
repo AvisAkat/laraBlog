@@ -4,7 +4,7 @@
 <head>
     <!-- Basic Page Info -->
     <meta charset="utf-8" />
-    <title>@yield('PageTitle')</title>
+    <title>@yield('pageTitle')</title>
 
     <!-- Site favicon -->
     <link rel="icon" type="image/png" sizes="16x16" href="/images/site/{{ isset(settings()->site_favicon) ? settings()->site_favicon : ''  }}" />

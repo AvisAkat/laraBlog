@@ -14,7 +14,7 @@ new class extends Component {
     //Delte Post and Post Modal info
     public $delete_id, $delete_function_name, $delete_name;
 
-    public $postPerPage = 3;
+    public $postPerPage = 7;
 
     //filter properties
     public $search = null;

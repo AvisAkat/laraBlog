@@ -10,7 +10,7 @@
 
     <!-- ===== HERO ===== -->
     <section class="hero">
-        <span class="hero-badge">✨ Welcome to ScribbleDiary</span>
+        <span class="hero-badge">✨ Welcome to {{ isset(settings()->site_title) ? settings()->site_title : '' }}</span>
         <h1>Discover Ideas That<br><span class="gradient-text">Inspire & Innovate</span></h1>
         <p>Explore thought-provoking articles on technology, design, business, and creative thinking from writers around the
             world.</p>
@@ -86,19 +86,24 @@
         </div>
 
         <div class="categories">
-            <span class="category-pill active">All</span>
-            <span class="category-pill">Technology</span>
-            <span class="category-pill">Design</span>
-            <span class="category-pill">Business</span>
-            <span class="category-pill">Lifestyle</span>
-            <span class="category-pill">Science</span>
+            <span class="category-pill active">
+                <a href="{{ route('blog.posts') }}">
+                    All
+                </a>
+            </span>
+            @foreach ($postCategories as $category)
+                <span class="category-pill">
+                    <a href="{{ route('blog.category_posts', $category->slug) }}">
+                        {{ $category->name }}({{ $category->posts_count }})
+                    </a>
+                </span>
+            @endforeach
         </div>
 
         <div class="articles-grid-home">
 
             @if (!empty($latestPost))
                 @foreach ($latestPost as $post)
-
                     <article class="article-card">
                         <a href="{{ route('blog.read_post', $post->slug) }}">
                             <img class="article-card-img" src="{{ asset('/images/posts') . '/' . $post->featured_image }}"
@@ -106,9 +111,11 @@
                         </a>
                         <div class="article-card-body">
                             <div class="article-card-meta">
-                                <a href="{{ route('blog.category_posts', $post->post_category->slug) }}">
-                                    <span class="tag">{{ $post->post_category->name }}</span>
-                                </a>
+                                <span class="tag">
+                                    <a href="{{ route('blog.category_posts', $post->post_category->slug) }}">
+                                        {{ $post->post_category->name }}
+                                    </a>
+                                </span>
                                 <span class="date"><i class="icon-copy ion-calendar"></i>
                                     {{ date_formatter($post->created_at, 'short') }}</span>
                                 <span class="read-time">|&nbsp;&nbsp;
@@ -126,8 +133,8 @@
                                 {!!Str::ucfirst(strip_words($post->content, 21)) !!}
                             </p>
                             <div style="margin-top: -16px;margin-bottom: 5px">
-                                <a href="{{ route('blog.author_posts', $featuredPost->author->username) }}">
-                                    <span class="author-tag">{{ $featuredPost->author->name }}</span>
+                                <a href="{{ route('blog.author_posts', $post->author->username) }}">
+                                    <span class="author-tag">{{ $post->author->name }}</span>
                                 </a>
                             </div>
                             <a href="{{ route('blog.read_post', $post->slug) }}" class="read-more">Read More <span
@@ -142,7 +149,7 @@
         </div>
 
         <div style="text-align: center; margin-top: 48px;">
-            <a href="articles.html" class="btn btn-outline">View All Articles →</a>
+            <a href="{{ route('blog.posts') }}" class="btn btn-outline">View All Articles →</a>
         </div>
     </section>
 

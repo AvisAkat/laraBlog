@@ -1290,7 +1290,13 @@ img {
     margin-top: 48px;
 }
 
-.articles-section .pagination a {
+.articles-section .pagination .pages {
+    display: flex;
+    gap: 8px;
+    flex-direction: row;
+}
+
+.articles-section .pagination a{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1303,6 +1309,11 @@ img {
     background: var(--bg-card);
     color: var(--text);
     transition: all 0.3s;
+}
+
+.articles-section .pagination .disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .articles-section .pagination a:hover {

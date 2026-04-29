@@ -22,8 +22,8 @@ new class extends Component {
     public $delete_id, $delete_function_name, $delete_name;
 
     //Pagination
-    public $pcactegoriesPerPage = 5;
-    public $categoriesPerPage = 7;
+    public $pcactegoriesPerPage = 6;
+    public $categoriesPerPage = 10;
 
 
     protected $listeners = ['updateParentCategoryOrdering', 'updateCategoryOrdering'];
@@ -200,6 +200,12 @@ new class extends Component {
     {
         $categories = Category::orderBy('ordering', 'asc')->paginate($this->categoriesPerPage, ['*'], 'cat_page');
         return $categories;
+    }
+
+    //for dispalying parent category name in the category create and update form
+    public function allParentCategories()
+    {
+        return ParentCategory::orderBy('name', 'asc')->get();
     }
 
     public function editCategory($id)
@@ -492,7 +498,7 @@ new class extends Component {
                         <label for=""><b>Parent category</b></label>
                         <select wire:model="parent" class="custom-select">
                             <option value="0">Uncategorized</option>
-                            @foreach ($this->parentCategories() as $pcategory)
+                            @foreach ($this->allParentCategories() as $pcategory)
                                 <option value="{{ $pcategory->id }}">{{ $pcategory->name }}</option>
                             @endforeach
                         </select>

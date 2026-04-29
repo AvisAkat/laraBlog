@@ -32,8 +32,8 @@
             </div>
             <button class="menu-toggle" onclick="document.querySelector('.nav').classList.toggle('open')">☰</button>
             <nav class="nav">
-                <a href="/" class="active">Home</a>
-                <a href="articles.html">Articles</a>
+                <a href="/" class="{{ Route::Is('blog.home') ? 'active' : '' }}">Home</a>
+                <a href="{{ route('blog.posts') }}" class="{{ Route::Is('blog.posts') ? 'active' : '' }}">Articles</a>
                 <a href="about.html">About Us</a>
                 <a href="contact.html">Contact</a>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
@@ -54,7 +54,6 @@
     <footer class="footer">
         <div class="footer-grid">
             <div class="footer-brand">
-                {{-- <a href="index.html" class="logo">BlogVerse</a> --}}
                 <div class="brand-logo">
                 <a href="/">
                     <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt="{{ isset(settings()->site_title) ? settings()->site_title : '' }}"

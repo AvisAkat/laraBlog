@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::controller(BlogController::class)->group(function () {
     Route::get('/', 'index')->name('blog.home');
+    Route::get('/posts', 'allPost')->name('blog.posts');
     Route::get('/post/{slug}', 'readPost')->name('blog.read_post');
     Route::get('/posts/category/{slug}', 'categoryPosts')->name('blog.category_posts');
     Route::get('/posts/parent-category/{slug}', 'parentCategoryPosts')->name('blog.parent_category_posts');

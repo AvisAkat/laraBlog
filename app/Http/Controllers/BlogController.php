@@ -195,4 +195,44 @@ class BlogController extends Controller
 
         return view('front.pages.allPost', $data);
     }
+
+    public function tagPosts($tagName = null)
+    {
+        //Find all post related to the Tag
+        $post = Post::whereLike('tags', $tagName)
+                ->where('visibility', 1)
+                ->paginate(12);
+
+        // Get Post Categories
+        $post_categories = $this->getPostCategories(10);
+
+        // Get Popular Posts
+        $popular_posts = Post::where('visibility', 1)
+            ->whereLike('tags', $tagName)
+            ->limit(5)
+            ->get();
+
+        //Get Tags
+        $tags = $this->getTags(15,null,null);
+
+        $title = 'Post in Tags' . $tagName;
+        $description = 'Browse the lastest posts with '.$tagName.' tag. Stay updated with articles, insights and tutorials.';
+
+        /** Set SEO Meta Tags */
+        SEOTools::setTitle($title, false);
+        SEOTools::setDescription($description);
+        SEOTools::opengraph()->setUrl(Url()->current());
+
+        $data = [
+            'pageTitle' => $title,
+            'allPosts' => $post,
+            'allTags' => $tags,
+            'postCategories' => $post_categories,
+            'popularPosts' => $popular_posts,
+            'categoryName' => $tagName,
+        ];
+
+        return view('front.pages.allPost', $data);
+
+    }
 }

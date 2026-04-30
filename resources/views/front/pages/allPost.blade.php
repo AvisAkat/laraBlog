@@ -14,7 +14,7 @@
         @if (!$categoryName)
         <h1>All <span class="gradient-text">Articles</span></h1>
         @else
-        <h1><span class="gradient-text">{{ $categoryName ?  $categoryName : '' }}</span></h1>
+        <h1><span class="gradient-text" style="text-transform: capitalize">{{ $categoryName ?  $categoryName : '' }}</span></h1>
         @endif
         <p>Browse our complete collection of articles, tutorials, and stories {{ $categoryName ? 'on ' . $categoryName : '' }}</p>
     </div>
@@ -97,7 +97,7 @@
                         </article>
                     @empty
                     <hr style="margin: 20px 0;border: none;border-top: 1px solid #6b7280;">
-                        <h4 style="text-align: center">No articles found {{ $categoryName ? 'in ' . $categoryName . 'category' : '' }}.</h4>
+                        <h4 style="text-align: center">No articles found {{ $categoryName ? 'in ' . $categoryName . ' category' : '' }}.</h4>
                     @endforelse
 
                 </div>

@@ -40,7 +40,7 @@
                                 {{ $featuredPost->post_category->name }}
                             </span>
                         </a>
-                        <a href="{{ route('blog.category_posts', $featuredPost->post_category->parent_category->slug) }}">
+                        <a href="javascript:;">
                             <span class="tag tag-accent">
                                 {{ $featuredPost->post_category->parent_category->name }}
                             </span>

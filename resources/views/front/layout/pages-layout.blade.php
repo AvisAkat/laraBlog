@@ -33,7 +33,7 @@
             <button class="menu-toggle" onclick="document.querySelector('.nav').classList.toggle('open')">☰</button>
             <nav class="nav">
                 <a href="/" class="{{ Route::Is('blog.home') ? 'active' : '' }}">Home</a>
-                <a href="{{ route('blog.posts') }}" class="{{ Route::Is('blog.posts') ? 'active' : '' }}">Articles</a>
+                <a href="{{ route('blog.posts') }}" class="{{ Route::Is('blog.posts') || Route::Is('blog.category_posts') ? 'active' : '' }}">Articles</a>
                 <a href="about.html">About Us</a>
                 <a href="contact.html">Contact</a>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">

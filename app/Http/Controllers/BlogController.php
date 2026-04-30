@@ -9,7 +9,7 @@ use Artesaos\SEOTools\Facades\SEOTools;
 
 class BlogController extends Controller
 {
-    public function getTags($limit = null, $slug = null)
+    public function getTags($limit = null, $slug = null, $category = null)
     {
 
         if ($slug) {
@@ -17,8 +17,13 @@ class BlogController extends Controller
                 ->where('slug', $slug)
                 ->whereNotNull('tags')
                 ->pluck('tags');
-        } else {
-
+        }elseif ($category){
+            $tags = Post::where('visibility', 1)
+                ->where('category', $category)
+                ->whereNotNull('tags')
+                ->pluck('tags');
+        }
+         else {
             $tags = Post::where('visibility', 1)
                 ->whereNotNull('tags')
                 ->pluck('tags');
@@ -142,6 +147,50 @@ class BlogController extends Controller
             'popularPosts' => $popular_posts,
             'allPosts' => $all_posts,
             'allTags' => $unique_tags,
+            'categoryName' => null,
+        ];
+
+        return view('front.pages.allPost', $data);
+    }
+
+    public function categoryPosts($slug = null)
+    {
+        //Find Category by slug
+        $category = Category::where('slug',$slug)->firstOrFail();
+
+        //Retriving post related to category
+        $post = Post::where('category', $category->id)
+            ->where('visibility', 1)
+            ->orderBy('created_at')
+            ->paginate(12);
+
+        // Get Post Categories
+        $post_categories = $this->getPostCategories(10);
+
+        // Get Popular Posts
+        $popular_posts = Post::where('visibility', 1)
+            ->where('category', $category->id)
+            ->limit(5)
+            ->get();
+
+        //Get category related Tags
+        $tags = $this->getTags(15,null,$category->id);
+
+        $title = 'Post in Category' . $category->name;
+        $description = 'Browse the lastest posts in the '.$category->name.' category. Stay updated with articles, insights and tutorials.';
+
+        /** Set SEO Meta Tags */
+        SEOTools::setTitle($title, false);
+        SEOTools::setDescription($description);
+        SEOTools::opengraph()->setUrl(Url()->current());
+
+        $data = [
+            'pageTitle' => $title,
+            'allPosts' => $post,
+            'postCategories' => $post_categories,
+            'popularPosts' => $popular_posts,
+            'allTags' => $tags,
+            'categoryName' => $category->name,
         ];
 
         return view('front.pages.allPost', $data);

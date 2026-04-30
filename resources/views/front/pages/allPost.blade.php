@@ -11,8 +11,12 @@
 
     <!-- ===== PAGE BANNER ===== -->
     <div class="page-banner">
+        @if (!$categoryName)
         <h1>All <span class="gradient-text">Articles</span></h1>
-        <p>Browse our complete collection of articles, tutorials, and stories</p>
+        @else
+        <h1><span class="gradient-text">{{ $categoryName ?  $categoryName : '' }}</span></h1>
+        @endif
+        <p>Browse our complete collection of articles, tutorials, and stories {{ $categoryName ? 'on ' . $categoryName : '' }}</p>
     </div>
 
     <!-- ===== MAIN CONTENT ===== -->
@@ -32,11 +36,13 @@
                 </a>
             </span>
             @foreach ($postCategories as $category)
+                @if ($category->name != $categoryName)
                 <span class="category-pill">
                     <a href="{{ route('blog.category_posts', $category->slug) }}">
                         {{ $category->name }}({{ $category->posts_count }})
                     </a>
                 </span>
+                @endif
             @endforeach
         </div>
 
@@ -91,7 +97,7 @@
                         </article>
                     @empty
                     <hr style="margin: 20px 0;border: none;border-top: 1px solid #6b7280;">
-                        <h4 style="text-align: center">No articles found.</h4>
+                        <h4 style="text-align: center">No articles found {{ $categoryName ? 'in ' . $categoryName . 'category' : '' }}.</h4>
                     @endforelse
 
                 </div>

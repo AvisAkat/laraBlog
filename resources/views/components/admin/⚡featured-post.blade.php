@@ -7,12 +7,9 @@ use App\Models\ParentCategory;
 use App\Models\Category;
 use Illuminate\Support\Facades\File;
 
-new class extends Component {
-
+new class extends Component
+{
     use WithPagination;
-
-    //Delte Post and Post Modal info
-    public $delete_id, $delete_function_name, $delete_name;
 
     public $postPerPage = 13;
 
@@ -85,7 +82,6 @@ new class extends Component {
         return $categories_html;
     }
 
-
     //fetch all post
     public function allPosts()
     {
@@ -123,52 +119,9 @@ new class extends Component {
                 ->orderBy('id', $this->sortBy)
                 ->paginate($this->postPerPage);
     }
-
-    public function showPostDeleteConfirmationModal($id)
-    {
-        $this->delete_id = $id;
-        $this->delete_function_name = 'deletePost';
-        $this->delete_name = 'Post';
-        $this->dispatch('showDeleteConfirmationModal');
-    }
-
-    public function deletePost($id)
-    {
-        $post = Post::findOrFail($id);
-        $path = 'images/posts/';
-        $resized_path = $path.'resized/';
-        $old_featured_image = $post->featured_image;
-
-        //Delete featured image
-        if( $old_featured_image != "" && File::exists(public_path($path.$old_featured_image)) ){
-            File::delete(public_path($path.$old_featured_image));
-            
-            //Delete Resized Image
-            if( File::exists(public_path($resized_path.'resized_'.$old_featured_image)) ){
-                File::delete(public_path($resized_path.'resized_'.$old_featured_image));
-            }
-            //Delete Thumbnail Image
-            if( File::exists(public_path($resized_path.'thumb_'.$old_featured_image)) ){
-                File::delete(public_path($resized_path.'thumb_'.$old_featured_image));
-            }
-        }
-
-        //Delete Post from DB
-        $delete = $post->delete();
-
-        if($delete){
-            $this->dispatch(('hideDeleteConfirmationModal'));
-            $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Post has been deleted sucessfully']);
-        }else{
-            $this->dispatch(('hideDeleteConfirmationModal'));
-            $this->dispatch('showAlert', ['type' => 'error', 'message' => 'Something went wrong.']);
-        }
-
-
-    }
-
 };
 ?>
+
 <div>
     <div class="pd-20 card-box mb-30">
         <div class="row mb-20">
@@ -197,7 +150,7 @@ new class extends Component {
             <div class="col-md-2">
                 <label for="visibility"><b class="text-secondary">Visibility</b>:</label>
                 <select wire:model.live="visibility" id="visibility" class="custom-select form-control">
-                    <option value="">None selected</option>
+                    <option value="">No selected</option>
                     <option value="public">Public</option>
                     <option value="private">Private</option>
                 </select>
@@ -247,14 +200,11 @@ new class extends Component {
                             </td>
                             <td>
                                 <div class="table-actions">
-                                    <a href="{{ route('admin.edit_post', ['id' => $item->id]) }}" data-color="#265ed7"
+                                    <a href="" data-color="#265ed7"
                                         style="color: rgb(38, 94, 215)">
                                         <i class="icon-copy dw dw-edit2"></i>
                                     </a>
-                                    <a href="javascript:;" wire:click="showPostDeleteConfirmationModal({{ $item->id }})"
-                                        data-color="#e95959" style="color: rgb(233, 89, 89)">
-                                        <i class="icon-copy dw dw-delete-3"></i>
-                                    </a>
+                                   
                                 </div>
                             </td>
                         </tr>
@@ -271,13 +221,4 @@ new class extends Component {
         </div>
     </div>
 
-    {{-- Delete confirmation modal --}}
-    @component('components.delete-confirmation-modal', [
-        'delete_id' => $delete_id,
-        'delete_function_name' => $delete_function_name,
-        'delete_name' => $delete_name
-    ])
-    
-    @endcomponent
-{{-- Delete Modal End --}}
 </div>

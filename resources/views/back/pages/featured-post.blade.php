@@ -14,29 +14,18 @@
                             <a href="{{ route('admin.dashboard') }}">Home</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
-                            All Post
+                            Featured Post
                         </li>
                     </ol>
                 </nav>
             </div>
             <div class="col-md-6 col-sm-12 text-right">
                 <a href="{{ route('admin.add_post') }}" class="btn btn-primary"><i class="icon-copy bi bi-plus-circle"></i>
-                    Add post</a>
+                    All Post</a>
             </div>
         </div>
     </div>
 
-    @livewire('admin.posts')
+    @livewire('admin.featured-post')
 
 @endsection
-@push('scripts')
-    <script>
-        //Delete item from posts table
-        window.addEventListener('showDeleteConfirmationModal', function(event) {
-            $('#delete_confirmation_modal').modal('show');
-        });
-        window.addEventListener('hideDeleteConfirmationModal', function(event) {
-            $('#delete_confirmation_modal').modal('hide');
-        });
-    </script>
-@endpush

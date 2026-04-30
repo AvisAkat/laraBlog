@@ -245,9 +245,19 @@ class PostController extends Controller
         $saved = $post->save();
 
         if ($saved) {
-            return response()->json(['status' => 1, 'message' => 'Blog post has been successfully updated']);
+            return response()->json(['status' => 1, 'message' => 'Post has been successfully updated']);
         } else {
             return response()->json(['status' => 0, 'message' => 'Something went wrong while updating a post.']);
         }
+    }
+
+    //Featured Post
+    public function featuredPost()
+    {
+        $data = [
+            'pageTitle' => 'Featured Post'
+        ];
+
+        return view('back.pages.featured-post', $data);
     }
 }

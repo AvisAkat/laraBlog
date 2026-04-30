@@ -11,12 +11,62 @@
 
     <!-- ===== PAGE BANNER ===== -->
     <div class="page-banner">
-        @if (!$categoryName)
-        <h1>All <span class="gradient-text">Articles</span></h1>
+        @isset($author)
+            <div class="author-banner">
+                <img class="author-avatar" src="{{ asset($author->picture) }}" alt="Author {{ $author->name }}">
+                <h2 class="gradient-text">{{ $author->name }}</h2>
+                <p style="text-transform: capitalize; margin-top: -10px;">{{ $author->username }}</p>
+                <p class="author-bio-text">{{ $author->bio }}</p>
+
+                @if ($author->social_links)
+                    <div class="social-links">
+                        @if ($author->social_links->facebook_url)
+                            <a href="{{ $author->social_links->facebook_url }}" target="_blank">
+                                <button class="share-btn" aria-label="Share on Facebook"><i class="ti-facebook"></i></button>
+                            </a>
+                        @endif
+                        @if ($author->social_links->instagram_url)
+                            <a href="{{ $author->social_links->instagram_url }}" target="_blank">
+                                <button class="share-btn" aria-label="Share on Instagram"><i class="ti-instagram"></i></button>
+                            </a>
+                        @endif
+                        @if ($author->social_links->youtube_url)
+                            <a href="{{ $author->social_links->youtube_url }}" target="_blank">
+                                <button class="share-btn" aria-label="Share on YouTube"><i class="ti-youtube"></i></button>
+                            </a>
+                        @endif
+                        @if ($author->social_links->linkedin_url)
+                            <a href="{{ $author->social_links->linkedin_url }}" target="_blank">
+                                <button class="share-btn" aria-label="Share on LinkedIn"><i class="ti-linkedin"></i></button>
+                            </a>
+                        @endif
+                        @if ($author->social_links->github_url)
+                            <a href="{{ $author->social_links->github_url }}" target="_blank">
+                                <button class="share-btn" aria-label="Share on GitHub"><i class="ti-github"></i></button>
+                            </a>
+                        @endif
+                        @if ($author->social_links->x_url)
+                            <a href="{{ $author->social_links->x_url }}" target="_blank">
+                                <button class="share-btn" aria-label="Share on X">𝕏</button>
+                            </a>
+                        @endif
+
+                    </div>
+
+                @endif
+            </div>
+
         @else
-        <h1><span class="gradient-text" style="text-transform: capitalize">{{ $categoryName ?  $categoryName : '' }}</span></h1>
-        @endif
-        <p>Browse our complete collection of articles, tutorials, and stories {{ $categoryName ? 'on ' . $categoryName : '' }}</p>
+            @if (!$bannerInfo)
+                <h1>All <span class="gradient-text">Articles</span></h1>
+            @else
+                <h1><span class="gradient-text" style="text-transform: capitalize">{{ $bannerInfo ? $bannerInfo : '' }}</span></h1>
+            @endif
+            <p>Browse our complete collection of articles, tutorials, and stories
+                {{ $bannerInfo ? 'in ' . $bannerInfo . ' category' : '' }}
+            </p>
+        @endisset
+
     </div>
 
     <!-- ===== MAIN CONTENT ===== -->
@@ -36,12 +86,12 @@
                 </a>
             </span>
             @foreach ($postCategories as $category)
-                @if ($category->name != $categoryName)
-                <span class="category-pill">
-                    <a href="{{ route('blog.category_posts', $category->slug) }}">
-                        {{ $category->name }}({{ $category->posts_count }})
-                    </a>
-                </span>
+                @if ($category->name != $bannerInfo)
+                    <span class="category-pill">
+                        <a href="{{ route('blog.category_posts', $category->slug) }}">
+                            {{ $category->name }}({{ $category->posts_count }})
+                        </a>
+                    </span>
                 @endif
             @endforeach
         </div>
@@ -56,11 +106,13 @@
 
                         <!-- Article -->
                         <article class="article-card-horizontal">
-                            <a href="{{ route('blog.read_post', $post->slug) }}">
-                                <img class="article-card-horizontal-img"
-                                src="{{ asset('images/posts/resized/thumb_') . $post->featured_image }}"
-                                alt="{{ $post->title }}">
-                            </a>
+                            <div>
+                                <a href="{{ route('blog.read_post', $post->slug) }}">
+                                    <img class="article-card-horizontal-img"
+                                        src="{{ asset('images/posts/resized/thumb_') . $post->featured_image }}"
+                                        alt="{{ $post->title }}">
+                                </a>
+                            </div>
                             <div class="article-card-horizontal-body">
                                 <div class="article-card-meta">
                                     <span class="tag">
@@ -96,8 +148,8 @@
                             </div>
                         </article>
                     @empty
-                    <hr style="margin: 20px 0;border: none;border-top: 1px solid #6b7280;">
-                        <h4 style="text-align: center">No articles found {{ $categoryName ? 'in ' . $categoryName . ' category' : '' }}.</h4>
+                        <hr style="margin: 20px 0;border: none;border-top: 1px solid #6b7280;">
+                        <h4 style="text-align: center">No posts found</h4>
                     @endforelse
 
                 </div>
@@ -129,9 +181,9 @@
                     <h3>🏷️ Tags</h3>
                     <div class="tags-cloud">
                         @foreach ($allTags as $tag)
-                        <span class="tag {{ $loop->odd ? 'tag-accent' : '' }}">
-                            <a href="{{ route('blog.tag_posts', urlencode($tag)) }}">{{ $tag }}</a>
-                        </span>
+                            <span class="tag {{ $loop->odd ? 'tag-accent' : '' }}">
+                                <a href="{{ route('blog.tag_posts', urlencode($tag)) }}">{{ $tag }}</a>
+                            </span>
                         @endforeach
                     </div>
                 </div>

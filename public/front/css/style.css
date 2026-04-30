@@ -921,6 +921,70 @@ img {
     margin: 0 auto;
 }
 
+.page-banner .author-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.page-banner .author-avatar {
+    width: 255px;
+    height: 255px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.page-banner .author-banner h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    text-transform: capitalize;
+}
+
+.page-banner .author-banner .author-bio-text {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.page-banner .author-banner .social-links {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.page-banner .author-banner .social-links span {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.page-banner .author-banner .social-links .share-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.page-banner .author-banner .social-links .share-btn:hover {
+    background: var(--gradient);
+    color: #fff;
+    border-color: transparent;
+    transform: translateY(-3px);
+}
+
 /* ===== SECTION ===== */
 .articles-section {
     max-width: 1200px;
@@ -931,6 +995,7 @@ img {
 /* ===== SEARCH BAR ===== */
 .articles-section .search-bar {
     display: flex;
+    flex-wrap: wrap;
     gap: 12px;
     max-width: 600px;
     margin: 0 auto 40px;
@@ -1339,10 +1404,6 @@ img {
         grid-template-columns: 1fr;
     }
 
-    .article-card-horizontal {
-        grid-template-columns: 1fr;
-    }
-
     .article-card-horizontal-img {
         min-height: 200px;
     }
@@ -1353,6 +1414,18 @@ img {
 }
 
 @media (max-width: 640px) {
+    .articles-layout .article-card-horizontal {
+        grid-template-columns: 1fr;
+    }
+
+    .articles-layout .article-card-horizontal-img {
+        max-height: 250px;
+    }
+
+    .articles-section .search-bar {
+        justify-content: center;
+    }
+
     .menu-toggle {
         display: block;
     }

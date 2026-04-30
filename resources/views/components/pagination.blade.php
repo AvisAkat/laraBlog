@@ -1,13 +1,13 @@
-<div>
+<div style="width: 100%;">
     @if ($paginator->hasPages())
         <nav class="pagination">
 
             {{-- Previous (Newer Posts) --}}
             @if ($paginator->onFirstPage())
-                <span class="nav-btn disabled">← Newer Posts</span>
+                <span class="nav-btn disabled">←</span>
             @else
                 <a href="{{ $paginator->previousPageUrl() }}" class="nav-btn" rel="prev">
-                    ← Newer Posts
+                    ←
                 </a>
             @endif
 
@@ -52,10 +52,10 @@
             {{-- Next (Older Posts) --}}
             @if ($paginator->hasMorePages())
                 <a href="{{ $paginator->nextPageUrl() }}" class="nav-btn" rel="next">
-                    Older Posts →
+                    →
                 </a>
             @else
-                <span class="nav-btn disabled">Older Posts →</span>
+                <span class="nav-btn disabled">→</span>
             @endif
 
         </nav>

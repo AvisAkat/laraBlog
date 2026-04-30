@@ -16,7 +16,6 @@ Route::controller(BlogController::class)->group(function () {
     Route::get('/posts', 'allPost')->name('blog.posts');
     Route::get('/post/{slug}', 'readPost')->name('blog.read_post');
     Route::get('/posts/category/{slug}', 'categoryPosts')->name('blog.category_posts');
-    Route::get('/posts/parent-category/{slug}', 'parentCategoryPosts')->name('blog.parent_category_posts');
     Route::get('/posts/author/{username}', 'authorPosts')->name('blog.author_posts');
     Route::get('/posts/tag/{any}', 'tagPosts')->name('blog.tag_posts');
     Route::get('/search', 'searchPosts')->name('blog.search_posts');

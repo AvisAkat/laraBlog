@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\User;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Artesaos\SEOTools\Facades\SEOTools;
 
 class BlogController extends Controller
 {
-    public function getTags($limit = null, $slug = null)
+    public function getTags($limit = null, $slug = null, $category = null, $author = null)
     {
 
         if ($slug) {
@@ -17,8 +18,18 @@ class BlogController extends Controller
                 ->where('slug', $slug)
                 ->whereNotNull('tags')
                 ->pluck('tags');
-        } else {
-
+        }elseif ($category){
+            $tags = Post::where('visibility', 1)
+                ->where('category', $category)
+                ->whereNotNull('tags')
+                ->pluck('tags');
+        }elseif ($author){
+            $tags = Post::where('visibility', 1)
+                ->where('author_id', $author)
+                ->whereNotNull('tags')
+                ->pluck('tags');
+        }
+         else {
             $tags = Post::where('visibility', 1)
                 ->whereNotNull('tags')
                 ->pluck('tags');
@@ -142,8 +153,160 @@ class BlogController extends Controller
             'popularPosts' => $popular_posts,
             'allPosts' => $all_posts,
             'allTags' => $unique_tags,
+            'bannerInfo' => null,
         ];
 
         return view('front.pages.allPost', $data);
+    }
+
+    public function categoryPosts($slug = null)
+    {
+        //Find Category by slug
+        $category = Category::where('slug',$slug)->firstOrFail();
+
+        //Retriving post related to category
+        $post = Post::where('category', $category->id)
+            ->where('visibility', 1)
+            ->orderBy('created_at')
+            ->paginate(12);
+
+        // Get Post Categories
+        $post_categories = $this->getPostCategories(10);
+
+        // Get Popular Posts
+        $popular_posts = Post::where('visibility', 1)
+            ->where('category', $category->id)
+            ->limit(5)
+            ->get();
+
+        //Get category related Tags
+        $tags = $this->getTags(15,null,$category->id);
+
+        $title = 'Post in Category ' . $category->name;
+        $description = 'Browse the lastest posts in the '.$category->name.' category. Stay updated with articles, insights and tutorials.';
+
+        /** Set SEO Meta Tags */
+        SEOTools::setTitle($title, false);
+        SEOTools::setDescription($description);
+        SEOTools::opengraph()->setUrl(Url()->current());
+
+        $data = [
+            'pageTitle' => $title,
+            'allPosts' => $post,
+            'postCategories' => $post_categories,
+            'popularPosts' => $popular_posts,
+            'allTags' => $tags,
+            'categoryName' => $category->name,
+            'bannerInfo' => $category->name,
+        ];
+
+        return view('front.pages.allPost', $data);
+    }
+
+    public function tagPosts($tagName = null)
+    {
+        //Find all post related to the Tag
+        $post = Post::where('tags', 'LIKE', "%{$tagName}%")
+                ->where('visibility', 1)
+                ->paginate(12);
+
+        // Get Post Categories
+        $post_categories = $this->getPostCategories(10);
+
+        // Get Popular Posts
+        $popular_posts = Post::where('tags', 'LIKE', "%{$tagName}%")
+            ->where('visibility', 1)
+            ->limit(5)
+            ->get();
+
+        //Get Tags
+        $tags = $this->getTags(15);
+
+        /** For Meta Tags */
+        $title = 'Post tagged with ' . $tagName;
+        $description = "Explore our collection of posts tagged with {$tagName}.";
+
+        /** Set SEO Meta Tags */
+        SEOTools::setTitle($title, false);
+        SEOTools::setDescription($description);
+        SEOTools::setCanonical(Url()->current());
+
+        SEOTools::opengraph()->setUrl(Url()->current());
+        SEOTools::opengraph()->addProperty('type', 'articles');
+
+        $data = [
+            'pageTitle' => $title,
+            'allPosts' => $post,
+            'allTags' => $tags,
+            'postCategories' => $post_categories,
+            'popularPosts' => $popular_posts,
+            'bannerInfo' => $tagName,
+        ];
+
+        return view('front.pages.allPost', $data);
+
+    }
+
+    public function authorPosts($username = null)
+    {
+        $author = User::where('username', $username)->firstOrFail();
+        //Find all post related to the Author
+        $post = Post::where('author_id', $author->id)
+                ->where('visibility', 1)
+                ->paginate(12);
+
+        // Get Post Categories
+        $categories = Category::withCount('posts')
+            ->having('posts_count', '>', 0)
+            ->get();
+
+       // Get Post Categories by the author
+        $post_categories = [];
+
+        foreach ($post as $item){
+            foreach($categories as $category){
+                if($item->category == $category->id){
+                    $post_categories[] = $category;
+                }
+            }
+        }
+
+        // Get Popular Posts
+        $popular_posts = Post::where('author_id', $author->id)
+            ->where('visibility', 1)
+            ->limit(5)
+            ->get();
+
+        //Get Tags
+        $tags = $this->getTags(15,null,null,$author->id);
+
+        /** For Meta Tags */
+        $title = 'Post by ' . $author->name;
+        $description = "Explore our collection of posts by {$author->name} on various topics.";
+
+        /** Set SEO Meta Tags */
+        SEOTools::setTitle($title, false);
+        SEOTools::setDescription($description);
+        SEOTools::setCanonical(route('blog.author_posts', ['username' => $author->username]));
+
+        SEOTools::opengraph()->setUrl(route('blog.author_posts', ['username' => $author->username]));
+        SEOTools::opengraph()->addProperty('type', 'profile');
+        SEOTools::opengraph()->setProfile([
+            'first_name' => $author->name,
+            'username' => $author->username,
+        ]);
+
+        $data = [
+            'pageTitle' => $title,
+            'author' => $author,
+            'allPosts' => $post,
+            'allTags' => $tags,
+            'postCategories' => $post_categories,
+            'popularPosts' => $popular_posts,
+            'bannerInfo' => $author->name,
+        ];
+
+        return view('front.pages.allPost', $data);
+
     }
 }

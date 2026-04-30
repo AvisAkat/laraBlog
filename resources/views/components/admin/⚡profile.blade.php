@@ -41,7 +41,17 @@ new class extends Component {
         $this->validate([
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,
-            'bio' => 'nullable|string|max:500',
+            'bio' => 'nullable|string|max:255',
+        ], [
+            'name.required' => 'Name is required',
+            'name.string' => 'Name must not contain spaces and special characters',
+            'name.max' => 'Name cannot exceed 255 characters',
+            'username.required' => 'Username is required',
+            'username.string' => 'Username must not contain spaces and special characters',
+            'username.max' => 'Username cannot exceed 255 characters',
+            'username.unique' => 'This username is already taken. Please choose another one.',
+            'bio.string' => 'Bio must not contain special characters',
+            'bio.max' => 'Bio cannot exceed 255 characters'
         ]);
 
         //Update user details
@@ -145,7 +155,7 @@ new class extends Component {
 
             //Update Records
             $query = $user->social_links()->update($data);
-            
+
         } else {
 
             //Insert New Record
@@ -155,10 +165,10 @@ new class extends Component {
         }
 
         if ($query) {
-                $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Social Links Updated sucessfully!!']);
-            } else {
-                $this->dispatch('showAlert', ['type' => 'error', 'message' => 'Failed to update social links. Please try again.']);
-            }
+            $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Social Links Updated sucessfully!!']);
+        } else {
+            $this->dispatch('showAlert', ['type' => 'error', 'message' => 'Failed to update social links. Please try again.']);
+        }
 
     }
 
@@ -331,7 +341,8 @@ new class extends Component {
                                                 <div class="form-group">
                                                     <label for="">Bio</label>
                                                     <textarea name="bio" cols="4" rows="4" class="form-control"
-                                                        name="bio" placeholder="Type your bio..." id=""></textarea>
+                                                        wire:model="bio" placeholder="Type your bio..."
+                                                        id=""></textarea>
                                                     @error('bio')
                                                         <span class="text-danger ml-1">{{ $message }}</span>
                                                     @enderror
@@ -339,7 +350,7 @@ new class extends Component {
                                             </div>
                                         </div>
                                         <div class="form-group text-center">
-                                            <button class="btn btn-primary" type="submit">Save Cahnges</button>
+                                            <button class="btn btn-primary" type="submit">Save Changes</button>
                                         </div>
                                     </form>
                                 </div>
@@ -395,7 +406,9 @@ new class extends Component {
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="form-group mb-3">
-                                                    <label for=""><b>Facebook <i class="icon-copy fa fa-facebook-official" aria-hidden="true"></i></b></label>
+                                                    <label for=""><b>Facebook <i
+                                                                class="icon-copy fa fa-facebook-official"
+                                                                aria-hidden="true"></i></b></label>
                                                     <input type="text" wire:model="facebook_url"
                                                         placeholder="Facebook URL" class="form-control">
                                                     @error('facebook_url')
@@ -405,7 +418,8 @@ new class extends Component {
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group mb-3">
-                                                    <label for=""><b>Instagram <i class="icon-copy fa fa-instagram" aria-hidden="true"></i></b></label>
+                                                    <label for=""><b>Instagram <i class="icon-copy fa fa-instagram"
+                                                                aria-hidden="true"></i></b></label>
                                                     <input type="text" wire:model="instagram_url"
                                                         placeholder="Instagram URL" class="form-control">
                                                     @error('instagram_url')
@@ -415,7 +429,8 @@ new class extends Component {
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group mb-3">
-                                                    <label for=""><b>Youtube <i class="icon-copy fa fa-youtube-play" aria-hidden="true"></i></b></label>
+                                                    <label for=""><b>Youtube <i class="icon-copy fa fa-youtube-play"
+                                                                aria-hidden="true"></i></b></label>
                                                     <input type="text" wire:model="youtube_url"
                                                         placeholder="Youtube URL" class="form-control">
                                                     @error('youtube_url')
@@ -425,7 +440,8 @@ new class extends Component {
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group mb-3">
-                                                    <label for=""><b>LinkedIn <i class="icon-copy fa fa-linkedin-square" aria-hidden="true"></i></b></label>
+                                                    <label for=""><b>LinkedIn <i class="icon-copy fa fa-linkedin-square"
+                                                                aria-hidden="true"></i></b></label>
                                                     <input type="text" wire:model="linkedin_url"
                                                         placeholder="LinkedIn URL" class="form-control">
                                                     @error('linkedin_url')
@@ -435,7 +451,8 @@ new class extends Component {
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group mb-3">
-                                                    <label for=""><b>X <i class="icon-copy fa fa-twitter-square" aria-hidden="true"></i></b></label>
+                                                    <label for=""><b>𝕏 <i class="icon-copy fa fa-twitter-square"
+                                                                aria-hidden="true"></i></b></label>
                                                     <input type="text" wire:model="x_url" placeholder="X URL"
                                                         class="form-control">
                                                     @error('x_url')
@@ -445,7 +462,8 @@ new class extends Component {
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group mb-3">
-                                                    <label for=""><b>GitHub <i class="icon-copy fa fa-github" aria-hidden="true"></i></b></label>
+                                                    <label for=""><b>GitHub <i class="icon-copy fa fa-github"
+                                                                aria-hidden="true"></i></b></label>
                                                     <input type="text" wire:model="github_url" placeholder="GitHub URL"
                                                         class="form-control">
                                                     @error('github_url')

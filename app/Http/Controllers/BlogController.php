@@ -7,10 +7,11 @@ use App\Models\Post;
 use App\Models\User;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Artesaos\SEOTools\Facades\SEOTools;
+use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
-    public function getTags($limit = null, $slug = null, $category = null, $author = null)
+    public function getTags($limit = null, $slug = null, $category = null, $author = null, $Posttags = null)
     {
 
         if ($slug) {
@@ -18,18 +19,19 @@ class BlogController extends Controller
                 ->where('slug', $slug)
                 ->whereNotNull('tags')
                 ->pluck('tags');
-        }elseif ($category){
+        } elseif ($category) {
             $tags = Post::where('visibility', 1)
                 ->where('category', $category)
                 ->whereNotNull('tags')
                 ->pluck('tags');
-        }elseif ($author){
+        } elseif ($author) {
             $tags = Post::where('visibility', 1)
                 ->where('author_id', $author)
                 ->whereNotNull('tags')
                 ->pluck('tags');
-        }
-         else {
+        } elseif ($Posttags) {
+            $tags = $Posttags;
+        } else {
             $tags = Post::where('visibility', 1)
                 ->whereNotNull('tags')
                 ->pluck('tags');
@@ -162,10 +164,10 @@ class BlogController extends Controller
 
     public function categoryPosts($slug = null)
     {
-        //Find Category by slug
-        $category = Category::where('slug',$slug)->firstOrFail();
+        // Find Category by slug
+        $category = Category::where('slug', $slug)->firstOrFail();
 
-        //Retriving post related to category
+        // Retriving post related to category
         $post = Post::where('category', $category->id)
             ->where('visibility', 1)
             ->orderBy('created_at')
@@ -180,10 +182,10 @@ class BlogController extends Controller
             ->limit(5)
             ->get();
 
-        //Get category related Tags
-        $tags = $this->getTags(15,null,$category->id);
+        // Get category related Tags
+        $tags = $this->getTags(15, null, $category->id);
 
-        $title = 'Post in Category ' . $category->name;
+        $title = 'Post in Category '.$category->name;
         $description = 'Browse the lastest posts in the '.$category->name.' category. Stay updated with articles, insights and tutorials.';
 
         /** Set SEO Meta Tags */
@@ -206,10 +208,10 @@ class BlogController extends Controller
 
     public function tagPosts($tagName = null)
     {
-        //Find all post related to the Tag
+        // Find all post related to the Tag
         $post = Post::where('tags', 'LIKE', "%{$tagName}%")
-                ->where('visibility', 1)
-                ->paginate(12);
+            ->where('visibility', 1)
+            ->paginate(12);
 
         // Get Post Categories
         $post_categories = $this->getPostCategories(10);
@@ -220,11 +222,11 @@ class BlogController extends Controller
             ->limit(5)
             ->get();
 
-        //Get Tags
+        // Get Tags
         $tags = $this->getTags(15);
 
         /** For Meta Tags */
-        $title = 'Post tagged with ' . $tagName;
+        $title = 'Post tagged with '.$tagName;
         $description = "Explore our collection of posts tagged with {$tagName}.";
 
         /** Set SEO Meta Tags */
@@ -251,22 +253,22 @@ class BlogController extends Controller
     public function authorPosts($username = null)
     {
         $author = User::where('username', $username)->firstOrFail();
-        //Find all post related to the Author
+        // Find all post related to the Author
         $post = Post::where('author_id', $author->id)
-                ->where('visibility', 1)
-                ->paginate(12);
+            ->where('visibility', 1)
+            ->paginate(12);
 
         // Get Post Categories
         $categories = Category::withCount('posts')
             ->having('posts_count', '>', 0)
             ->get();
 
-       // Get Post Categories by the author
+        // Get Post Categories by the author
         $post_categories = [];
 
-        foreach ($post as $item){
-            foreach($categories as $category){
-                if($item->category == $category->id){
+        foreach ($post as $item) {
+            foreach ($categories as $category) {
+                if ($item->category == $category->id) {
                     $post_categories[] = $category;
                 }
             }
@@ -275,14 +277,15 @@ class BlogController extends Controller
         // Get Popular Posts
         $popular_posts = Post::where('author_id', $author->id)
             ->where('visibility', 1)
+            ->orderByDesc('number_of_views')
             ->limit(5)
             ->get();
 
-        //Get Tags
-        $tags = $this->getTags(15,null,null,$author->id);
+        // Get Tags
+        $tags = $this->getTags(15, null, null, $author->id);
 
         /** For Meta Tags */
-        $title = 'Post by ' . $author->name;
+        $title = 'Post by '.$author->name;
         $description = "Explore our collection of posts by {$author->name} on various topics.";
 
         /** Set SEO Meta Tags */
@@ -309,5 +312,74 @@ class BlogController extends Controller
 
         return view('front.pages.allPost', $data);
 
+    }
+
+    public function searchPosts(Request $request)
+    {
+        // Search Validation
+        $request->validate([
+            'articleSearch' => 'required|string|max:200|regex:/^[\pL\pN\s]+$/u',
+        ], [
+            'articleSearch.required' => 'Enter at least 2 characters.',
+            'articleSearch.max' => 'Characters are too long.',
+            'articleSearch.regex' => 'Search must only contain letters and numbers.',
+        ]);
+
+        $query = $request->input('articleSearch');
+
+        $keywords = explode(' ', $query);
+        $postsQuery = Post::query();
+
+        foreach ($keywords as $keyword) {
+            $postsQuery->orWhere('title', 'LIKE', '%'.$keyword.'%')
+                ->orwhere('tags', 'LIKE', '%'.$keyword.'%');
+        }
+        $posts = $postsQuery->where('visibility', 1)
+            ->orderByDesc('created_at')
+            ->paginate(12);
+
+        //Getting tags related to the search
+        $Posttags = $posts->pluck('tags');
+        $tags = $this->getTags(15, null, null, null, $Posttags);
+
+        //Getting most view post among the searches
+        $popular_posts = $postsQuery->where('visibility' , 1)
+                                    ->orderByDesc('number_of_views')
+                                    ->limit(5)
+                                    ->get();
+
+
+        //Getting Post Categories related to the search
+        $categories = Category::withCount('posts')
+            ->having('posts_count', '>', 0)
+            ->get();
+
+        $post_categories = [];
+
+        foreach ($posts as $item) {
+            foreach ($categories as $category) {
+                if ($item->category == $category->id) {
+                    $post_categories[] = $category;
+                }
+            }
+        }
+
+        /** Meta Tags */
+        $title = "Search results for {$query}";
+        $description = "Browse search results for {$query} on our blog,";
+
+        SEOTools::setTitle($title, false);
+        SEOTools::setDescription($description);
+
+        $data = [
+            'pageTitle' => $title,
+            'bannerInfo' => $query,
+            'allPosts' => $posts,
+            'allTags' => $tags,
+            'postCategories' => $post_categories,
+            'popularPosts' => $popular_posts,
+        ];
+
+        return view('front.pages.allPost', $data);
     }
 }

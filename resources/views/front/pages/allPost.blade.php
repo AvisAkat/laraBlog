@@ -73,10 +73,7 @@
     <section class="articles-section">
 
         <!-- Search -->
-        <div class="search-bar">
-            <input type="text" placeholder="Search articles...">
-            <button>Search</button>
-        </div>
+        <x-sidebar-search></x-sidebar-search>
 
         <!-- Categories -->
         <div class="categories">

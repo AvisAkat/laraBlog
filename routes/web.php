@@ -64,6 +64,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::get('/posts', 'allPosts')->name('posts');
                 Route::get('/post/{id}/edit','editPost')->name('edit_post');
                 Route::post('/post/update', 'updatePost')->name('update_post');
+                Route::get('/featured-post', 'featuredPost')->name('featured_post');
             });
         });
     });

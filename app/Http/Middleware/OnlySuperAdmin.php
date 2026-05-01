@@ -16,7 +16,7 @@ class OnlySuperAdmin
     public function handle(Request $request, Closure $next): Response
     {
 
-        if (auth()->user()->type != 'superAdmin') {
+        if (auth()->user()->type != \App\UserType::SuperAdmin) {
             abort(403, "You don't have access to this page");
         }
 

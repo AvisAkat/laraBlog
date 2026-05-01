@@ -286,7 +286,7 @@
                             <span class="micon fa fa-home"></span><span class="mtext">Home</span>
                         </a>
                     </li>
-                    @if (auth()->user()->type == 'superAdmin')
+                    @if (auth()->user()->type === \App\UserType::SuperAdmin)
                         <li>
                             <a href="{{ route('admin.categories') }}"
                                 class="dropdown-toggle no-arrow {{ Route::is('admin.categories') ? 'active' : '' }}">
@@ -302,9 +302,10 @@
                         <ul class="submenu">
                             <li><a href="{{ route('admin.add_post') }}" class="{{ Route::is('admin.add_post') ? 'active' : '' }}">New</a></li>
                             <li><a href="{{ route('admin.posts') }}" class="{{ Route::is('admin.posts') ? 'active' : '' }}">Posts</a></li>
+                            <li><a href="{{ route('admin.featured_post') }}" class="{{ Route::is('admin.featured_post') ? 'active' : '' }}">Featured Post</a></li>
                         </ul>
                     </li>
-                    @if (auth()->user()->type == 'superAdmin')
+                    @if (auth()->user()->type === \App\UserType::SuperAdmin)
                     <li class="dropdown">
                         <a href="javascript:;" class="dropdown-toggle">
                             <span class="micon fa fa-shopping-bag"></span><span class="mtext">Shop</span>
@@ -335,7 +336,7 @@
                             </span>
                         </a>
                     </li>
-                    @if (auth()->user()->type == 'superAdmin')
+                    @if (auth()->user()->type === \App\UserType::SuperAdmin)
                     <li>
                         <a href="{{ route('admin.settings') }}"
                             class="dropdown-toggle no-arrow {{ Route::is('admin.settings') ? 'active' : '' }}">

@@ -31,7 +31,7 @@
         @if (!empty($featuredPost))
 
             <div class="featured-card">
-                <img class="featured-card-img" src="{{ asset('images/posts') . '/' . $featuredPost->featured_image }}"
+                <img class="featured-card-img" src="{{ asset('images/posts/' . $featuredPost->featured_image) }}"
                     alt="Team working on technology">
                 <div class="featured-card-body">
                     <div class="article-card-meta">
@@ -94,7 +94,7 @@
             @foreach ($postCategories as $category)
                 <span class="category-pill">
                     <a href="{{ route('blog.category_posts', $category->slug) }}">
-                        {{ $category->name }}({{ $category->posts_count }})
+                        {{ $category->name }}
                     </a>
                 </span>
             @endforeach
@@ -106,7 +106,7 @@
                 @foreach ($latestPost as $post)
                     <article class="article-card">
                         <a href="{{ route('blog.read_post', $post->slug) }}">
-                            <img class="article-card-img" src="{{ asset('/images/posts') . '/' . $post->featured_image }}"
+                            <img class="article-card-img" src="{{ asset('/images/posts/' . $post->featured_image) }}"
                                 alt="Design workspace">
                         </a>
                         <div class="article-card-body">

@@ -5,5 +5,5 @@ namespace App;
 enum UserType: string
 {
     case Admin = 'admin';
-    case SuperAdmnin = 'superAdmin';
+    case SuperAdmin = 'superAdmin';
 }

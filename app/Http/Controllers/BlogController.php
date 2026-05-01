@@ -84,14 +84,15 @@ class BlogController extends Controller
         SEOTools::twitter()->setSite('@ScribbleDiary');
 
         // Get the most recent post
-        $featured_post = Post::where('visibility', 1)
+        $featured_post = Post::where('is_featured', true)
+            ->where('visibility', 1)
             ->orderByDesc('created_at')
             ->first();
 
         // Get the latest post
-        $latest_post = Post::skip(1)
-            ->limit(6)
+        $latest_post = Post::where('is_featured', false)
             ->where('visibility', 1)
+            ->limit(6)
             ->orderByDesc('created_at')
             ->get();
 

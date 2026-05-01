@@ -176,7 +176,7 @@ new class extends Component {
                 <label for="search"><b class="text-secondary">Search</b>:</label>
                 <input type="text" wire:model.live="search" id="search" class="form-control" placeholder="Search posts">
             </div>
-            @if (auth()->user()->type == "superAdmin")
+            @if (auth()->user()->type === \App\UserType::SuperAdmin)
                 <div class="col-md-2">
                     <label for="author"><b class="text-secondary">Author</b>:</label>
                     <select wire:model.live="author" id="author" class="custom-select form-control">

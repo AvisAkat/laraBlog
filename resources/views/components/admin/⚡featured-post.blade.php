@@ -7,8 +7,7 @@ use App\Models\ParentCategory;
 use App\Models\Category;
 use Illuminate\Support\Facades\File;
 
-new class extends Component
-{
+new class extends Component {
     use WithPagination;
 
     public $postPerPage = 13;
@@ -19,6 +18,9 @@ new class extends Component
     public $category = null;
     public $visibility = null;
     public $sortBy = 'desc';
+
+    //Read more modal properties
+    public $selected_post = null;
 
     //To prevent the selected boxes from refereshing after refreshing the page.
     protected $queryString = [
@@ -119,17 +121,115 @@ new class extends Component
                 ->orderBy('id', $this->sortBy)
                 ->paginate($this->postPerPage);
     }
+
+    public function showReadMoreModal($post)
+    {
+        $this->selected_post = $post;
+        $this->dispatch('show_read_more_modal');
+    }
+
+    public function hideReadMoreModal()
+    {
+        $this->selected_post = null;
+        $this->dispatch('hide_read_more_modal');
+    }
+
+    //Make a post featured
+    public function makePostFeatured($post_id)
+    {
+        $post = Post::findOrFail($post_id);
+
+        //Check if the post is already featured
+        if ($post->is_featured) {
+            //If the post is already featured, then unfeature it.
+            $this->dispatch('showAlert', ['type' => 'info', 'message' => 'Post is already featured!']);
+        } else {
+            //If the post is not featured, then feature it.
+            if ($post->visibility == 0) {
+                $this->dispatch('showAlert', ['type' => 'warning', 'message' => 'Private post cannot be featured!']);
+                return;
+            }
+
+            //Unfeature all other posts
+            Post::where('is_featured', true)->update(['is_featured' => false]);
+
+            //Feature the selected post
+            $post->is_featured = true;
+            $post->save();
+
+            $this->dispatch('showAlert', ['type' => 'success', 'message' => 'Post featured successfully!']);
+        }
+    }
+
+    public function currentFeaturedPost()
+    {
+        return Post::where('is_featured', true)->first();
+    }
 };
 ?>
 
 <div>
     <div class="pd-20 card-box mb-30">
+        <h4 class="text-blue h4 mt-10 mb-10">Current Featured Post</h4>
+        <div class="container pd-0">
+            <div class="blog-list">
+                <ul>
+                    <li>
+                        <div class="row no-gutters">
+                            <div class="col-lg-4 col-md-12 col-sm-12">
+                                <div class="blog-img"
+                                    style="background: url(&quot;{{ asset('images/posts/' . $this->currentFeaturedPost()->featured_image) }}&quot;) center center no-repeat;">
+                                    <img src="{{ asset('images/posts/' . $this->currentFeaturedPost()->featured_image) }}"
+                                        alt="" class="bg_img" style="display: none">
+                                </div>
+                            </div>
+                            <div class="col-lg-8 col-md-12 col-sm-12">
+                                <div class="blog-caption">
+                                    <h3 class="mb-20">
+                                        {{ $this->currentFeaturedPost()->title }}
+                                    </h3>
+                                    <div class="blog-by">
+                                        <p>
+                                            {!! Str::ucfirst(strip_words($this->currentFeaturedPost()->content, 60)) !!}
+                                        </p>
+                                        <div class="text-secondary">
+                                            <span class="">
+                                                <i class="icon-copy bi bi-person-fill"></i>
+                                                {{ $this->currentFeaturedPost()->author->name }}
+                                            </span>
+                                            <span class="">
+                                                | <i class="icon-copy bi bi-clock"></i>
+                                                {{ readingDuration($this->currentFeaturedPost()->title, $this->currentFeaturedPost()->content) }}
+                                                @choice('min|mins', readingDuration($this->currentFeaturedPost()->title, $this->currentFeaturedPost()->content))
+                                                read
+                                            </span>
+                                            <span class="">
+                                                | <i class="icon-copy bi bi-calendar2-date"></i>
+                                                {{ $this->currentFeaturedPost()->created_at->format('M d, Y') }}
+                                            </span>
+                                        </div>
+                                        <div class="pt-10">
+                                            <a href="javascript:;"
+                                                wire:click="showReadMoreModal({{ $this->currentFeaturedPost() }})"
+                                                class="btn btn-outline-primary">Read More</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="pd-20 card-box mb-30">
+        <h4 class="text-blue h4 mt-10 mb-10">All Post</h4>
         <div class="row mb-20">
             <div class="col-md-4">
                 <label for="search"><b class="text-secondary">Search</b>:</label>
                 <input type="text" wire:model.live="search" id="search" class="form-control" placeholder="Search posts">
             </div>
-            @if (auth()->user()->type == "superAdmin")
+            @if (auth()->user()->type === \App\UserType::SuperAdmin)
                 <div class="col-md-2">
                     <label for="author"><b class="text-secondary">Author</b>:</label>
                     <select wire:model.live="author" id="author" class="custom-select form-control">
@@ -200,11 +300,16 @@ new class extends Component
                             </td>
                             <td>
                                 <div class="table-actions">
-                                    <a href="" data-color="#265ed7"
-                                        style="color: rgb(38, 94, 215)">
-                                        <i class="icon-copy dw dw-edit2"></i>
+                                    <a href="javascript:;" wire:click="showReadMoreModal({{ $item }})" data-color=" #265ed7"
+                                        data-toggle="tooltip" title="read more" style="color: rgb(38, 94, 215)">
+                                        <i class="icon-copy bi bi-file-arrow-up-fill"></i>
                                     </a>
-                                   
+                                    <a href="javascript:;" wire:click="makePostFeatured({{ $item->id }})"
+                                        data-color="#099b13" data-toggle="tooltip" title="Make Featured"
+                                        style="color: #099b13">
+                                        <i class="icon-copy bi bi-check-square-fill"></i>
+                                    </a>
+
                                 </div>
                             </td>
                         </tr>
@@ -218,6 +323,68 @@ new class extends Component
         </div>
         <div class="block mt-1">
             {{ $this->allPosts()->links('livewire::simple-bootstrap') }}
+        </div>
+    </div>
+
+    {{-- Read more modal --}}
+    <div wire:ignore.self class="modal fade bs-example-modal-lg" id="read_more_modal" tabindex="-1" role="dialog"
+        aria-labelledby="myLargeModalLabel" aria-modal="true" style="padding-right: 15px;">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel">
+                        Read More
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        ×
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="blog-detail">
+                        <h4 class="mb-10 text-center mb-40">
+                            {{ $this->selected_post ? $this->selected_post['title'] : '' }}
+                        </h4>
+                        <div class="blog-img" style="display: flex;justify-content: center;">
+                            <img style="width: 80%"
+                                src="{{ asset('images/posts/' . optional($this->selected_post)['featured_image']) }}"
+                                alt="">
+                        </div>
+                        <div class="blog-caption">
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipisicing
+                                elit, sed do eiusmod tempor incididunt ut labore et
+                                dolore magna aliqua. Ut enim ad minim veniam, quis
+                                nostrud exercitation ullamco laboris nisi ut aliquip
+                                ex ea commodo consequat. Duis aute irure dolor in
+                                reprehenderit in voluptate velit esse cillum dolore eu
+                                fugiat nulla pariatur. Excepteur sint occaecat
+                                cupidatat non proident, sunt in culpa qui officia
+                                deserunt mollit anim id est laborum.
+                            </p>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipisicing
+                                elit, sed do eiusmod tempor incididunt ut labore et
+                                dolore magna aliqua. Ut enim ad minim veniam, quis
+                                nostrud exercitation ullamco laboris nisi ut aliquip
+                                ex ea commodo consequat. Duis aute irure dolor in
+                                reprehenderit in voluptate velit esse cillum dolore eu
+                                fugiat nulla pariatur. Excepteur sint occaecat
+                                cupidatat non proident, sunt in culpa qui officia
+                                deserunt mollit anim id est laborum.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                        wire:click="makePostFeatured({{ optional($this->selected_post)['id'] }})">
+                        Make Featured
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 

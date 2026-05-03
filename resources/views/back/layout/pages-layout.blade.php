@@ -302,7 +302,9 @@
                         <ul class="submenu">
                             <li><a href="{{ route('admin.add_post') }}" class="{{ Route::is('admin.add_post') ? 'active' : '' }}">New</a></li>
                             <li><a href="{{ route('admin.posts') }}" class="{{ Route::is('admin.posts') ? 'active' : '' }}">Posts</a></li>
+                            @if (auth()->user()->type === \App\UserType::SuperAdmin)
                             <li><a href="{{ route('admin.featured_post') }}" class="{{ Route::is('admin.featured_post') ? 'active' : '' }}">Featured Post</a></li>
+                            @endif
                         </ul>
                     </li>
                     @if (auth()->user()->type === \App\UserType::SuperAdmin)

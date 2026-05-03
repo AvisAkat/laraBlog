@@ -8,12 +8,12 @@ use App\Models\User;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Artesaos\SEOTools\Facades\SEOTools;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
     public function getTags($limit = null, $slug = null, $category = null, $author = null, $Posttags = null)
     {
-
         if ($slug) {
             $tags = Post::where('visibility', 1)
                 ->where('slug', $slug)
@@ -381,5 +381,65 @@ class BlogController extends Controller
         ];
 
         return view('front.pages.allPost', $data);
+    }
+
+    public function readPost($slug = null)
+    {
+        //Fetch single post by slug
+        $post = POST::where('slug', $slug)->firstOrFail();
+
+        //Get related post
+        $relatedPosts = Post::where('category', $post->category)
+                            ->where('id', '!=', $post->id)
+                            ->where('visibility', 1)
+                            ->take(3)
+                            ->get();
+
+        //Get the next post
+        $nextPost = Post::where('id', '>' , $post->id)
+                        ->where('visibility', 1)
+                        ->orderBy('id', 'asc')
+                        ->first();
+
+        //Get the previous post
+        $prevPost = Post::where('id', '<' , $post->id)
+                        ->where('visibility', 1)
+                        ->orderBy('id', 'desc')
+                        ->first();
+
+        //Get more articles you may like
+        $moreArticles = Post::where('id', '!=', $post->id)
+                            ->inRandomOrder()
+                            ->limit(3)
+                            ->get();
+
+        //Get the post tags
+        $postTags = POST::where('slug', $slug)->value('tags');
+        $tags = explode(',', $postTags);
+
+        //Set SEO Meta Tags
+        $title = $post->title;
+        $description = ($post->meta_description != '') ? $post->meta_description : str::words($post->content, 35);
+
+        SEOTools::setTitle($title, false);
+        SEOTools::setDescription($description);
+        SEOTools::opengraph()->setUrl(route('blog.read_post', ['slug' => $post->slug]));
+        SEOTools::opengraph()->addProperty('type', 'article');
+        SEOTools::opengraph()->addImage(asset('images/posts/'. $post->featured_image));
+        SEOTools::twitter()->setImage(asset('images/posts/'.$post->fetured_image));
+
+        $data = [
+            'pageTitle' => $title,
+            'post' => $post,
+            'relatedPosts' => $relatedPosts,
+            'nextPost' => $nextPost,
+            'previousPost' => $prevPost,
+            'tags' => $tags,
+            'moreArticles' => $moreArticles
+        ];
+
+        return view('front.pages.single_post', $data);
+
+
     }
 }

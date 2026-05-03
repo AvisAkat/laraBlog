@@ -15,7 +15,7 @@
         <p>Explore thought-provoking articles on technology, design, business, and creative thinking from writers around the
             world.</p>
         <div class="hero-buttons">
-            <a href="articles.html" class="btn btn-primary">Browse Articles →</a>
+            <a href="{{ route('blog.posts') }}" class="btn btn-primary">Browse Articles →</a>
             <a href="#featured" class="btn btn-outline">Featured Stories</a>
         </div>
     </section>

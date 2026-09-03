@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 
 /**
- * FRONTENE ROUTES
+ * FRONTEND ROUTES
 */
 
 Route::controller(BlogController::class)->group(function () {

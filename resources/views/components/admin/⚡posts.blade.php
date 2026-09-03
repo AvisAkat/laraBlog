@@ -227,13 +227,13 @@ new class extends Component {
                             <td scope="'row">{{ $item->id }}</td>
                             <td>
                                 <a href="">
-                                    <img src="{{ asset('images/posts/resized/resized_' . $item->featured_image) }}"
+                                    <img src="{{ asset('images/posts/resized/resized_' . $item->featured_image) ?? '.' }}" class="img-fluid"
                                         width="100" alt="">
                                 </a>
                             </td>
-                            <td>{{ $item->title }}</td>
-                            <td>{{ $item->author->name }}</td>
-                            <td>{{ $item->post_category->name }}</td>
+                            <td>{{ $item->title ?? 'No Title' }}</td>
+                            <td>{{ $item->author->name ?? 'No Author' }}</td>
+                            <td>{{ $item->post_category->name ?? 'No Category' }}</td>
                             <td>
                                 @if ($item->visibility == 1)
                                     <span class="badge badge-pill badge-success">

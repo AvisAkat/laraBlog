@@ -22,7 +22,7 @@
                     <div class="social-links">
                         @if ($author->social_links->facebook_url)
                             <a href="{{ $author->social_links->facebook_url }}" target="_blank">
-                                <button class="share-btn" aria-label="Share on Facebook"><i class="ti-facebook"></i></button>
+                                <button class="share-btn" aria-label="Share on Facebook"></button>
                             </a>
                         @endif
                         @if ($author->social_links->instagram_url)
@@ -113,8 +113,8 @@
                             <div class="article-card-horizontal-body">
                                 <div class="article-card-meta">
                                     <span class="tag">
-                                        <a href="{{ route('blog.category_posts', $post->post_category->slug) }}">
-                                            {{ $post->post_category->name }}
+                                        <a href="{{ route('blog.category_posts', $post->post_category->slug ?? '.') }}">
+                                            {{ $post->post_category->name ?? '.' }}
                                         </a>
                                     </span>
                                     {{-- <span class="tag tag-accent">Featured</span> --}}

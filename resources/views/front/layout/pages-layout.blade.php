@@ -33,7 +33,8 @@
             <button class="menu-toggle" onclick="document.querySelector('.nav').classList.toggle('open')">☰</button>
             <nav class="nav">
                 <a href="/" class="{{ Route::Is('blog.home') ? 'active' : '' }}">Home</a>
-                <a href="{{ route('blog.posts') }}" class="{{ Route::Is('blog.posts') || Route::Is('blog.category_posts') ? 'active' : '' }}">Articles</a>
+                <a href="{{ route('blog.posts') }}"
+                    class="{{ Route::Is('blog.posts') || Route::Is('blog.category_posts') ? 'active' : '' }}">Articles</a>
                 <a href="about.html">About Us</a>
                 <a href="contact.html">Contact</a>
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
@@ -55,13 +56,15 @@
         <div class="footer-grid">
             <div class="footer-brand">
                 <div class="brand-logo">
-                <a href="/">
-                    <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt="{{ isset(settings()->site_title) ? settings()->site_title : '' }}"
-                        class="dark-logo site_logo" />
-                    <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}" alt="{{ isset(settings()->site_title) ? settings()->site_title : '' }}"
-                        class="light-logo site_logo" />
-                </a>
-            </div>
+                    <a href="/">
+                        <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}"
+                            alt="{{ isset(settings()->site_title) ? settings()->site_title : '' }}"
+                            class="dark-logo site_logo" />
+                        <img src="/images/site/{{ isset(settings()->site_logo) ? settings()->site_logo : '' }}"
+                            alt="{{ isset(settings()->site_title) ? settings()->site_title : '' }}"
+                            class="light-logo site_logo" />
+                    </a>
+                </div>
                 <p>
                     {{ isset(settings()->site_meta_description) ? settings()->site_meta_description : '' }}
                 </p>
@@ -76,7 +79,7 @@
                 <h4>Quick Links</h4>
                 <ul class="footer-links">
                     <li><a href="/">Home</a></li>
-                    <li><a href="articles.html">All Articles</a></li>
+                    <li><a href="{{ route('blog.posts') }}">All Articles</a></li>
                     <li><a href="about.html">About Us</a></li>
                     <li><a href="contact.html">Contact</a></li>
                 </ul>
@@ -101,13 +104,15 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <span>© 2025 BlogVerse. All rights reserved.</span>
-            <span>Crafted with ❤️ for the web</span>
+            <span>© 2026 ScribbleDiary. All rights reserved.</span>
+            <span>Designed by AvisAkat</span>
         </div>
     </footer>
 
     <!-- ===== THEME JS ===== -->
     <script src="{{ asset('front/js/main.js') }}"></script>
+    <script src="{{ asset('extra-assets/jquery-ui/jquery-ui.min.js') }}"></script> {{-- jquery version is 1.14.0 --}}
+    @stack('scripts')
 
 </body>
 

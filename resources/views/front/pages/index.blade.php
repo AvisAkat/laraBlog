@@ -112,8 +112,8 @@
                         <div class="article-card-body">
                             <div class="article-card-meta">
                                 <span class="tag">
-                                    <a href="{{ route('blog.category_posts', $post->post_category->slug) }}">
-                                        {{ $post->post_category->name }}
+                                    <a href="{{ route('blog.category_posts', $post->post_category->slug ?? '.') }}">
+                                        {{ $post->post_category->name ?? '.' }}
                                     </a>
                                 </span>
                                 <span class="date"><i class="icon-copy ion-calendar"></i>

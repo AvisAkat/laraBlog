@@ -122,16 +122,12 @@
 
       <!-- Author Box -->
       <div class="author-box">
-        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=face"
-          alt="Alex Johnson" />
+        <img src="{{ $post->author->picture }}" alt="{{ $post->author->name }}" />
         <div>
-          <h4>Alex Johnson</h4>
-          <div class="role">Senior Technology Writer</div>
+          <h4>{{ $post->author->name }}</h4>
+          <div class="role">{{ $post->author->username }}</div>
           <p>
-            Alex has been covering technology for over a decade. He
-            specializes in AI, machine learning, and the intersection of
-            technology and society. His work has appeared in major tech
-            publications worldwide.
+            {{ $post->author->bio }}
           </p>
         </div>
       </div>
@@ -179,28 +175,28 @@
           Get weekly insights delivered to your inbox.
         </p>
         <input type="email" placeholder="Your email" style="
-                                    width: 100%;
-                                    padding: 12px 16px;
-                                    border: 2px solid rgba(255, 255, 255, 0.3);
-                                    border-radius: 10px;
-                                    background: rgba(255, 255, 255, 0.15);
-                                    color: #fff;
-                                    font-size: 0.9rem;
-                                    outline: none;
-                                    margin-bottom: 12px;
-                                  " />
+                                        width: 100%;
+                                        padding: 12px 16px;
+                                        border: 2px solid rgba(255, 255, 255, 0.3);
+                                        border-radius: 10px;
+                                        background: rgba(255, 255, 255, 0.15);
+                                        color: #fff;
+                                        font-size: 0.9rem;
+                                        outline: none;
+                                        margin-bottom: 12px;
+                                      " />
         <button style="
-                                    width: 100%;
-                                    padding: 12px;
-                                    background: #fff;
-                                    color: var(--primary);
-                                    border: none;
-                                    border-radius: 10px;
-                                    font-weight: 700;
-                                    font-size: 0.9rem;
-                                    cursor: pointer;
-                                    transition: all 0.3s;
-                                  ">
+                                        width: 100%;
+                                        padding: 12px;
+                                        background: #fff;
+                                        color: var(--primary);
+                                        border: none;
+                                        border-radius: 10px;
+                                        font-weight: 700;
+                                        font-size: 0.9rem;
+                                        cursor: pointer;
+                                        transition: all 0.3s;
+                                      ">
           Subscribe
         </button>
       </div>
@@ -208,7 +204,7 @@
   </div>
 
   <!-- ===== COMMENTS ===== -->
-  <section class="comments-section">
+  {{-- <section class="comments-section">
     <h2>💬 Comments (3)</h2>
 
     <!-- Comment Form -->
@@ -267,7 +263,32 @@
         </p>
       </div>
     </div>
+  </section> --}}
+  <section class="comments-section">
+    <h2 class="text-center">💬 Comments</h2>
+
+    <div id="disqus_thread"></div>
+    <script>
+      /**
+      *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+      *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+      
+      var disqus_config = function () {
+      this.page.url = "{{ route('blog.read_post', $post->id) }}";  // Replace PAGE_URL with your page's canonical URL variable
+      this.page.identifier = "PID_"+"{{ $post->id }}"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+      
+      (function () { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://scribblediary.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by
+        Disqus.</a></noscript>
   </section>
+
 
   <!-- ===== RELATED ARTICLES ===== -->
   <section class="related-section">
@@ -296,6 +317,7 @@
 
 @endsection
 @push('scripts')
+  <script id="dsq-count-scr" src="//scribblediary.disqus.com/count.js" async></script>
   <script>
     (function () {
       const shareUrl = @json(route('blog.read_post', $post->slug));

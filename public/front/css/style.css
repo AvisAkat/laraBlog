@@ -198,6 +198,11 @@ img {
     width: 100%;
 }
 
+.header-inner .user-settings {
+    display: flex;
+    gap: 7px;
+}
+
 /* ===== THEME TOGGLE ===== */
 .theme-toggle {
     width: 52px;
@@ -245,6 +250,57 @@ img {
     text-align: center;
 }
 
+/*==== Frontend User Details and Dropdown ====*/
+.user-settings .user-details {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+@media (max-width: 991px) {}
+
+.user-settings .user-details img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50px;
+}
+
+.user-settings .user-details-dropdown {
+    display: none;
+    position: absolute;
+    top: 45px;
+    right: 0;
+    background: var(--toggle-bg);
+    box-shadow: 0 4px 6px rgba(102, 51, 153, 0.1);
+    border-radius: 8px;
+    z-index: 1000;
+    min-width: 140px;
+}
+
+@media (max-width: 991px) {
+    .user-settings .user-details-dropdown {
+        right: auto;
+    }
+}
+
+.user-settings .user-details-dropdown a {
+    display: block;
+    padding: 10px 20px;
+    color: var(--text);
+    text-decoration: none;
+    text-align: left;
+    gap: 3px;
+}
+
+.user-settings .user-details-dropdown a:hover {
+    background-color: #cecdff;
+    color: var(--text-muted);
+}
+
+.user-settings .user-details.active .user-details-dropdown {
+    display: block;
+}
 
 /* ========== HOMEPAGE =========== */
 /* ===== HERO ===== */
@@ -1689,15 +1745,15 @@ img {
     margin-bottom: 30px;
 }
 
- .article-footer .nextPrev-article-section .prev-article {
+.article-footer .nextPrev-article-section .prev-article {
     width: 50%;
     color: #0025cc;
- }
- 
+}
+
 .article-footer .nextPrev-article-section .next-article {
-     width: 50%;
-     text-align: end;
-     color: #0025cc;
+    width: 50%;
+    text-align: end;
+    color: #0025cc;
 }
 
 .article-footer .nextPrev-article-section .prev-article:hover,
@@ -1771,6 +1827,7 @@ img {
     color: var(--accent);
     font-weight: 500;
     margin-bottom: 8px;
+    text-transform: capitalize;
 }
 
 .author-box p {
@@ -1805,11 +1862,11 @@ img {
 
 .sidebar .sidebar-card .related-item:hover img,
 .sidebar .sidebar-card .related-item:hover a {
-        transition: 1s;
+    transition: 1s;
 }
 
 .sidebar .sidebar-card .related-item:hover img {
-        transform: scale(1.03);
+    transform: scale(1.03);
 }
 
 .sidebar .sidebar-card .related-item:hover a {

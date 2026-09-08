@@ -37,10 +37,43 @@
                     class="{{ Route::Is('blog.posts') || Route::Is('blog.category_posts') ? 'active' : '' }}">Articles</a>
                 <a href="about.html">About Us</a>
                 <a href="contact.html">Contact</a>
+                {{-- <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <span class="theme-toggle-label"></span>
+                </button> --}}
+
+            </nav>
+
+            <div class="user-settings">
                 <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <span class="theme-toggle-label"></span>
                 </button>
-            </nav>
+
+                @auth
+                    {{-- User Deatils + Dropdown --}}
+                    <dic class="user-details">
+                        <img src="{{ auth()->user()->picture }}" alt="user-avater">
+                        <div class="user-details-dropdown">
+                            <a href="{{ route('admin.dashboard') }}">
+                                <i class="ti-dashboard"></i> Dashboard
+                            </a>
+                            <a href="{{ route('admin.profile') }}">
+                                <i class="ti-user"></i> Profile
+                            </a>
+                            @if (auth()->user()->type == App\UserType::SuperAdmin)
+                                <a href="{{ route('admin.settings') }}">
+                                    <i class="ti-settings"></i> Settings
+                                </a>
+                            @endif
+                            <form id="front-logout-form" action="{{ route('admin.logout', ['source' => 'front']) }}" method="POST" style="display: none">
+                                @csrf
+                            </form>
+                            <a href="javascript:;" onclick="event.preventDefault();document.getElementById('front-logout-form').submit();">
+                                <i class="ti-power-off"></i> Logout
+                            </a>
+                        </div>
+                    </dic>
+                @endauth
+            </div>
         </div>
     </header>
 
@@ -112,6 +145,19 @@
     <!-- ===== THEME JS ===== -->
     <script src="{{ asset('front/js/main.js') }}"></script>
     <script src="{{ asset('extra-assets/jquery-ui/jquery-ui.min.js') }}"></script> {{-- jquery version is 1.14.0 --}}
+    <script>
+        //Toggle User Details Dropdown Menu
+        document.querySelector('.user-settings .user-details').addEventListener('click', function () {
+            this.classList.toggle('active');
+        });
+        //Close Dropdown if user clicks outside
+        document.addEventListener('click', function (e) {
+            const userDetails = document.querySelector('.user-settings .user-details');
+            if (!userDetails.contains(e.target)) {
+                userDetails.classList.remove('active');
+            }
+        })
+    </script>
     @stack('scripts')
 
 </body>

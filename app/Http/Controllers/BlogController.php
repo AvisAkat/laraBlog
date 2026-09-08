@@ -413,6 +413,7 @@ class BlogController extends Controller
                             ->limit(3)
                             ->get();
 
+                            
         //Get the post tags
         $postTags = POST::where('slug', $slug)->value('tags');
         $tags = explode(',', $postTags);

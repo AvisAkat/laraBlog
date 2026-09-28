@@ -11,6 +11,17 @@
     <link rel="icon" type="image/png" sizes="16x16"
         href="/images/site/{{ isset(settings()->site_favicon) ? settings()->site_favicon : ''  }}" />
 
+    {{-- Prevent the page from flashing before the theme is applied --}}
+    <script data-theme-init>
+        (function () {
+            try {
+                var t = localStorage.getItem("theme");
+                if (!t && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
+                if (t) document.documentElement.setAttribute("data-theme", t);
+            } catch (e) { }
+        })();
+    </script>
+
     <!-- frontend css -->
     <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
     @stack('stylesheets')
@@ -36,7 +47,7 @@
                 <a href="{{ route('blog.posts') }}"
                     class="{{ Route::Is('blog.posts') || Route::Is('blog.category_posts') ? 'active' : '' }}">Articles</a>
                 <a href="about.html">About Us</a>
-                <a href="contact.html">Contact</a>
+                <a href="{{ route('blog.contact') }}">Contact</a>
                 {{-- <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
                     <span class="theme-toggle-label"></span>
                 </button> --}}
@@ -64,10 +75,12 @@
                                     <i class="ti-settings"></i> Settings
                                 </a>
                             @endif
-                            <form id="front-logout-form" action="{{ route('admin.logout', ['source' => 'front']) }}" method="POST" style="display: none">
+                            <form id="front-logout-form" action="{{ route('admin.logout', ['source' => 'front']) }}"
+                                method="POST" style="display: none">
                                 @csrf
                             </form>
-                            <a href="javascript:;" onclick="event.preventDefault();document.getElementById('front-logout-form').submit();">
+                            <a href="javascript:;"
+                                onclick="event.preventDefault();document.getElementById('front-logout-form').submit();">
                                 <i class="ti-power-off"></i> Logout
                             </a>
                         </div>

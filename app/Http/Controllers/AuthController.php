@@ -138,8 +138,8 @@ class AuthController extends Controller
         $mail_body = view('email-templates.forget-template', $data)->render();
 
         $mailConfig = [
-            'recipent_address' => $user->email,
-            'recipent_name' => $user->name,
+            'recipient_address' => $user->email,
+            'recipient_name' => $user->name,
             'subject' => 'Reset Password',
             'body' => $mail_body,
         ];
@@ -207,8 +207,8 @@ class AuthController extends Controller
         $mail_body = view('email-templates.password-changes-template', $data);
 
         $mailConfig = [
-            'recipent_address' => $user->email,
-            'recipent_name' => $user->name,
+            'recipient_address' => $user->email,
+            'recipient_name' => $user->name,
             'subject' => 'Reset Password',
             'body' => $mail_body,
         ];

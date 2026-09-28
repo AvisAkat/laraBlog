@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CMail;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
@@ -39,7 +40,7 @@ class BlogController extends Controller
 
         $unique_tags = $tags->flatMap(function ($tagsString) {
             return explode(',', $tagsString);
-        })->map(fn ($tag) => trim($tag)) // Trim any extra white spaces
+        })->map(fn($tag) => trim($tag)) // Trim any extra white spaces
             ->unique()
             ->sort()
             ->values();
@@ -66,7 +67,7 @@ class BlogController extends Controller
     {
         $title = isset(settings()->site_title) ? settings()->site_title : '';
         $description = isset(settings()->site_meta_description) ? settings()->site_meta_description : '';
-        $imgURL = isset(settings()->site_logo) ? asset('/images/site/'.settings()->site_logo) : '';
+        $imgURL = isset(settings()->site_logo) ? asset('/images/site/' . settings()->site_logo) : '';
         $keywords = isset(settings()->site_meta_keywords) ? settings()->site_meta_keywords : '';
         $currentUrl = isset(settings()->site_meta_keywords) ? settings()->site_meta_keywords : '';
 
@@ -115,7 +116,7 @@ class BlogController extends Controller
     {
         $title = isset(settings()->site_title) ? settings()->site_title : '';
         $description = isset(settings()->site_meta_description) ? settings()->site_meta_description : '';
-        $imgURL = isset(settings()->site_logo) ? asset('/images/site/'.settings()->site_logo) : '';
+        $imgURL = isset(settings()->site_logo) ? asset('/images/site/' . settings()->site_logo) : '';
         $keywords = isset(settings()->site_meta_keywords) ? settings()->site_meta_keywords : '';
         $currentUrl = isset(settings()->site_meta_keywords) ? settings()->site_meta_keywords : '';
 
@@ -185,8 +186,8 @@ class BlogController extends Controller
         // Get category related Tags
         $tags = $this->getTags(15, null, $category->id);
 
-        $title = 'Post in Category '.$category->name;
-        $description = 'Browse the lastest posts in the '.$category->name.' category. Stay updated with articles, insights and tutorials.';
+        $title = 'Post in Category ' . $category->name;
+        $description = 'Browse the lastest posts in the ' . $category->name . ' category. Stay updated with articles, insights and tutorials.';
 
         /** Set SEO Meta Tags */
         SEOTools::setTitle($title, false);
@@ -226,7 +227,7 @@ class BlogController extends Controller
         $tags = $this->getTags(15);
 
         /** For Meta Tags */
-        $title = 'Post tagged with '.$tagName;
+        $title = 'Post tagged with ' . $tagName;
         $description = "Explore our collection of posts tagged with {$tagName}.";
 
         /** Set SEO Meta Tags */
@@ -285,7 +286,7 @@ class BlogController extends Controller
         $tags = $this->getTags(15, null, null, $author->id);
 
         /** For Meta Tags */
-        $title = 'Post by '.$author->name;
+        $title = 'Post by ' . $author->name;
         $description = "Explore our collection of posts by {$author->name} on various topics.";
 
         /** Set SEO Meta Tags */
@@ -331,8 +332,8 @@ class BlogController extends Controller
         $postsQuery = Post::query();
 
         foreach ($keywords as $keyword) {
-            $postsQuery->orWhere('title', 'LIKE', '%'.$keyword.'%')
-                ->orwhere('tags', 'LIKE', '%'.$keyword.'%');
+            $postsQuery->orWhere('title', 'LIKE', '%' . $keyword . '%')
+                ->orwhere('tags', 'LIKE', '%' . $keyword . '%');
         }
         $posts = $postsQuery->where('visibility', 1)
             ->orderByDesc('created_at')
@@ -343,10 +344,10 @@ class BlogController extends Controller
         $tags = $this->getTags(15, null, null, null, $Posttags);
 
         //Getting most view post among the searches
-        $popular_posts = $postsQuery->where('visibility' , 1)
-                                    ->orderByDesc('number_of_views')
-                                    ->limit(5)
-                                    ->get();
+        $popular_posts = $postsQuery->where('visibility', 1)
+            ->orderByDesc('number_of_views')
+            ->limit(5)
+            ->get();
 
 
         //Getting Post Categories related to the search
@@ -390,30 +391,30 @@ class BlogController extends Controller
 
         //Get related post
         $relatedPosts = Post::where('category', $post->category)
-                            ->where('id', '!=', $post->id)
-                            ->where('visibility', 1)
-                            ->take(3)
-                            ->get();
+            ->where('id', '!=', $post->id)
+            ->where('visibility', 1)
+            ->take(3)
+            ->get();
 
         //Get the next post
-        $nextPost = Post::where('id', '>' , $post->id)
-                        ->where('visibility', 1)
-                        ->orderBy('id', 'asc')
-                        ->first();
+        $nextPost = Post::where('id', '>', $post->id)
+            ->where('visibility', 1)
+            ->orderBy('id', 'asc')
+            ->first();
 
         //Get the previous post
-        $prevPost = Post::where('id', '<' , $post->id)
-                        ->where('visibility', 1)
-                        ->orderBy('id', 'desc')
-                        ->first();
+        $prevPost = Post::where('id', '<', $post->id)
+            ->where('visibility', 1)
+            ->orderBy('id', 'desc')
+            ->first();
 
         //Get more articles you may like
         $moreArticles = Post::where('id', '!=', $post->id)
-                            ->inRandomOrder()
-                            ->limit(3)
-                            ->get();
+            ->inRandomOrder()
+            ->limit(3)
+            ->get();
 
-                            
+
         //Get the post tags
         $postTags = POST::where('slug', $slug)->value('tags');
         $tags = explode(',', $postTags);
@@ -426,8 +427,8 @@ class BlogController extends Controller
         SEOTools::setDescription($description);
         SEOTools::opengraph()->setUrl(route('blog.read_post', ['slug' => $post->slug]));
         SEOTools::opengraph()->addProperty('type', 'article');
-        SEOTools::opengraph()->addImage(asset('images/posts/'. $post->featured_image));
-        SEOTools::twitter()->setImage(asset('images/posts/'.$post->fetured_image));
+        SEOTools::opengraph()->addImage(asset('images/posts/' . $post->featured_image));
+        SEOTools::twitter()->setImage(asset('images/posts/' . $post->fetured_image));
 
         $data = [
             'pageTitle' => $title,
@@ -442,5 +443,61 @@ class BlogController extends Controller
         return view('front.pages.single_post', $data);
 
 
+    }
+
+    //CONTACT PAGE
+    public function contactPage()
+    {
+        $title = 'Conatct Us';
+        $description = 'Write Us An Email';
+
+        SEOTools::setTitle($title, false);
+        SEOTools::setDescription($description);
+
+        $data = [
+            'pageTitle' => $title,
+            'description' => $description
+        ];
+
+        return view('front.pages.contact', $data);
+    }
+
+    public function sendContactEmail(Request $request)
+    {
+        //FORM VALIDATION
+        $request->validate([
+            'name' => 'required|max:150|string',
+            'email' => 'required|email',
+            'phone' => 'nullable|numeric|min: 4',
+            'subject' => 'required',
+            'message' => 'required|min:3|'
+        ]);
+
+        $siteInfo = settings();
+
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'message' => $request->message,
+            'subject' => $request->subject,
+            'phone' => $request->phone ?? '',
+        ];
+
+        $mail_body = view('email-templates.conatact-message-template', $data);
+
+        $mail_config = [
+            'from_address' => $request->email,
+            'from_name' => $request->name,
+            'recipient_address' => $siteInfo->site_email,
+            'recipient_name' => $siteInfo->site_title,
+            'subject' => $request->subject,
+            'body' => $mail_body
+        ];
+
+        if (CMail::send($mail_config)) {
+            return redirect()->back()->with('success', 'Email Sent Successfully!.');
+        } else {
+            return redirect()->back()->withInput()->with('fail', 'Something went wrong. Try again later.');
+        }
     }
 }

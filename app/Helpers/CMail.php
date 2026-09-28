@@ -28,7 +28,7 @@ class CMail
                 isset($config['from_address']) ? $config['from_address'] : config('services.mail.from_address'),
                 isset($config['from_name']) ? $config['from_name'] : config('services.mail.from_name')
             );
-            $mail->addAddress($config['recipent_address'], isset($config['recipient_name']) ? $config['recipient_name'] : null); 
+            $mail->addAddress($config['recipient_address'], isset($config['recipient_name']) ? $config['recipient_name'] : null);
 
             // Content
             $mail->isHTML(true);                                  // Set email format to HTML

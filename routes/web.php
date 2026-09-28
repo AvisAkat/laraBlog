@@ -11,14 +11,16 @@ use Illuminate\Support\Facades\Route;
  * FRONTEND ROUTES
 */
 
-Route::controller(BlogController::class)->group(function () {
-    Route::get('/', 'index')->name('blog.home');
-    Route::get('/posts', 'allPost')->name('blog.posts');
-    Route::get('/post/{slug}', 'readPost')->name('blog.read_post');
-    Route::get('/posts/category/{slug}', 'categoryPosts')->name('blog.category_posts');
-    Route::get('/posts/author/{username}', 'authorPosts')->name('blog.author_posts');
-    Route::get('/posts/tag/{any}', 'tagPosts')->name('blog.tag_posts');
-    Route::get('/search', 'searchPosts')->name('blog.search_posts');
+Route::controller(BlogController::class)->name('blog.')->group(function () {
+    Route::get('/', 'index')->name('home');
+    Route::get('/posts', 'allPost')->name('posts');
+    Route::get('/post/{slug}', 'readPost')->name('read_post');
+    Route::get('/posts/category/{slug}', 'categoryPosts')->name('category_posts');
+    Route::get('/posts/author/{username}', 'authorPosts')->name('author_posts');
+    Route::get('/posts/tag/{any}', 'tagPosts')->name('tag_posts');
+    Route::get('/search', 'searchPosts')->name('search_posts');
+    Route::get('/contact', 'contactPage')->name('contact');
+    Route::post('/contact', 'sendContactEmail')->name('send_email');
 });
 
 // TESTING ROUTES

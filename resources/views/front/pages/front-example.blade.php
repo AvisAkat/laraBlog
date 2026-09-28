@@ -1,5 +1,5 @@
 @extends('front.layout.pages-layout')
-@section('pageTitle', isset($pageTitle) ? $pageTitle : 'BlogVerse')
+@section('pageTitle', isset($pageTitle) ? $pageTitle : 'ScribbyDiary')
 @section('content')
 
 ---page content here -----

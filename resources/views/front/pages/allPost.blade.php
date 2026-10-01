@@ -187,10 +187,7 @@
 
                 <!-- Newsletter -->
                 <div class="sidebar-newsletter">
-                    <h3>📬 Newsletter</h3>
-                    <p>Get weekly insights delivered to your inbox.</p>
-                    <input type="email" placeholder="Your email">
-                    <button>Subscribe</button>
+                    @livewire('news-letter-form-for-all-post')
                 </div>
 
             </aside>

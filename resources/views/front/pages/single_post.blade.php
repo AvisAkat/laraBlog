@@ -167,39 +167,8 @@
       @endif
 
       <!-- Newsletter -->
-      <div class="sidebar-card" style="background: var(--gradient); border: none; color: #fff">
-        <h3 style="color: #fff; border-bottom-color: rgba(255, 255, 255, 0.2)">
-          📬 Newsletter
-        </h3>
-        <p style="font-size: 0.88rem; opacity: 0.85; margin-bottom: 16px">
-          Get weekly insights delivered to your inbox.
-        </p>
-        <input type="email" placeholder="Your email" style="
-                                        width: 100%;
-                                        padding: 12px 16px;
-                                        border: 2px solid rgba(255, 255, 255, 0.3);
-                                        border-radius: 10px;
-                                        background: rgba(255, 255, 255, 0.15);
-                                        color: #fff;
-                                        font-size: 0.9rem;
-                                        outline: none;
-                                        margin-bottom: 12px;
-                                      " />
-        <button style="
-                                        width: 100%;
-                                        padding: 12px;
-                                        background: #fff;
-                                        color: var(--primary);
-                                        border: none;
-                                        border-radius: 10px;
-                                        font-weight: 700;
-                                        font-size: 0.9rem;
-                                        cursor: pointer;
-                                        transition: all 0.3s;
-                                      ">
-          Subscribe
-        </button>
-      </div>
+      @livewire('news-letter-form')
+
     </aside>
   </div>
 

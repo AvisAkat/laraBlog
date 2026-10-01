@@ -22,7 +22,8 @@ class Post extends Model
         'tags',
         'meta_keywords',
         'meta_description',
-        'visibility'
+        'visibility',
+        'is_notified'
     ];
 
      /**

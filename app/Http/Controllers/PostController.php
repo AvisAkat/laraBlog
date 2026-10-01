@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\File;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 
+use App\Models\NewsletterSubscriber;
+use App\Jobs\SendNewsletterJob;
+
 class PostController extends Controller
 {
     public function addPost()
@@ -68,7 +71,7 @@ class PostController extends Controller
             if ($upload) {
                 // Generate Resized Image and Thumbnail
                 $resized_path = $path . 'resized/';
-                if (! File::isDirectory($resized_path)) {
+                if (!File::isDirectory($resized_path)) {
                     File::makeDirectory($resized_path, 0777, true, true);
                 }
 
@@ -95,6 +98,7 @@ class PostController extends Controller
                     $post->meta_description = $request->meta_description;
                     $post->visibility = $request->visibility;
                     $saved = $post->save();
+
                 } catch (\Exception $e) {
 
                     // Delete uploaded image if failed to add post to the DB
@@ -112,10 +116,26 @@ class PostController extends Controller
                         }
                     }
 
-                    return response()->json(['status' => 0, 'message' => 'Something went wrong.']);
+                    return response()->json(['status' => 0, 'message' => 'Something went wrong. Try creating post again.']);
                 }
 
                 if ($saved) {
+
+                    // ========Send Email to Newaletter Subscribers ================
+                    if ($request->visibility == 1) {
+                        //Get lastest post created details
+                        $latestPost = Post::latest()->first();
+
+                        if (NewsletterSubscriber::count() > 0) {
+                            $subscribers = NewsletterSubscriber::pluck('email');
+                            foreach ($subscribers as $subscriber_email) {
+                                SendNewsletterJob::dispatch($subscriber_email, $latestPost);
+                            }
+                            $latestPost->is_notified = true;
+                            $latestPost->save();
+                        }
+
+                    }
                     return response()->json(data: ['status' => 1, 'message' => 'New post has been successfully created.']);
                 } else {
                     return response()->json(['status' => 0, 'message' => 'Something went wrong.']);
@@ -196,7 +216,7 @@ class PostController extends Controller
             if ($upload) {
                 // Generate Resized Image and Thumbnail
                 $resized_path = $path . 'resized/';
-                if (! File::isDirectory($resized_path)) {
+                if (!File::isDirectory($resized_path)) {
                     File::makeDirectory($resized_path, 0777, true, true);
                 }
 
@@ -231,6 +251,8 @@ class PostController extends Controller
             }
         }
 
+        $sendEmailToSubscribers = ($post->visibility == 0 && $post->is_notified == 0 && $request->visibility == 1) ? true : false;
+
         // Update Post in Database
         $post->author_id = auth()->id();
         $post->category = $request->category;
@@ -245,6 +267,19 @@ class PostController extends Controller
         $saved = $post->save();
 
         if ($saved) {
+            // === SEND NEWSLETTER TO SUBSCRIBERS ===
+            if ($sendEmailToSubscribers){
+                //Get Post details
+                $currentPost = Post::findOrFail($request->post_id);
+                if( NewsletterSubscriber::count() > 0 ){
+                    $subscribers = NewsletterSubscriber::pluck('email');
+                    foreach ($subscribers as $subscriber_email) {
+                        SendNewsletterJob::dispatch($subscriber_email, $currentPost);
+                    }
+                    $currentPost->is_notified = true;   
+                    $currentPost->save();
+                }
+            }
             return response()->json(['status' => 1, 'message' => 'Post has been successfully updated']);
         } else {
             return response()->json(['status' => 0, 'message' => 'Something went wrong while updating a post.']);

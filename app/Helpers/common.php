@@ -3,6 +3,7 @@
 use App\Models\GeneralSettings;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use App\Models\SiteSocialLink;
 
 /**
  * Site Information
@@ -11,6 +12,19 @@ if (! function_exists('settings')) {
     function settings()
     {
         return GeneralSettings::first();
+    }
+}
+
+/**
+ * Site Social Links
+ */
+if (! function_exists('site_social_links')) {
+    function site_social_links()
+    {
+        $links = SiteSocialLink::take(1)->first();
+        if (!is_null($links)) {
+            return $links;
+        }
     }
 }
 

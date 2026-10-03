@@ -43,13 +43,15 @@
                         here for you.</p>
 
                     <div class="info-items">
-                        <div class="info-item">
-                            <div class="info-icon">📧</div>
-                            <div class="info-content">
-                                <h4>Email Us</h4>
-                                <p><a href="mailto:scribblediary@gmail.com">scribblediary@gmail.com</a></p>
+                        @if (settings()->site_email)
+                            <div class="info-item">
+                                <div class="info-icon">📧</div>
+                                <div class="info-content">
+                                    <h4>Email Us</h4>
+                                    <p><a href="mailto:{{ settings()->site_email }}">{{ settings()->site_email }}</a></p>
+                                </div>
                             </div>
-                        </div>
+                        @endif
                         <div class="info-item">
                             <div class="info-icon">📍</div>
                             <div class="info-content">
@@ -57,13 +59,15 @@
                                 <p>East Legon, Greater Accra</p>
                             </div>
                         </div>
-                        <div class="info-item">
-                            <div class="info-icon">📞</div>
-                            <div class="info-content">
-                                <h4>Call Us</h4>
-                                <p><a href="tel:+14155551234">+233 (0) 000 000 000</a></p>
+                        @if (settings()->site_phone)
+                            <div class="info-item">
+                                <div class="info-icon">📞</div>
+                                <div class="info-content">
+                                    <h4>Call Us</h4>
+                                    <p><a href="tel:+14155551234">{{ settings()->site_phone }}</a></p>
+                                </div>
                             </div>
-                        </div>
+                        @endif
                         <div class="info-item">
                             <div class="info-icon">⏰</div>
                             <div class="info-content">
@@ -76,11 +80,35 @@
                     <div class="social-section">
                         <h4>Follow Us</h4>
                         <div class="social-links">
-                            <a href="#" aria-label="Twitter">𝕏</a>
-                            <a href="#" aria-label="Facebook"><i class="ti-facebook"></i></a>
-                            <a href="#" aria-label="Instagram"><i class="ti-instagram"></i></a>
-                            <a href="#" aria-label="LinkedIn"><i class="ti-linkedin"></i></a>
-                            <a href="#" aria-label="YouTube"><i class="ti-youtube"></i></a>
+                            @if (site_social_links()->x_url)
+                                <a href="{{ site_social_links()->x_url }}" target="_blank" aria-label="X" title="X (Twitter)">
+                                    𝕏
+                                </a>
+                            @endif
+                            @if (site_social_links()->facebook_url)
+                                <a href="{{ site_social_links()->facebook_url }}" target="_blank" aria-label="Facebook"
+                                    title="Facebook">
+                                    <i class="ti-facebook"></i>
+                                </a>
+                            @endif
+                            @if (site_social_links()->instagram_url)
+                                <a href="{{ site_social_links()->instagram_url }}" target="_blank" aria-label="Instagram"
+                                    title="Instagram">
+                                    <i class="ti-instagram"></i>
+                                </a>
+                            @endif
+                            @if (site_social_links()->linkedin_url)
+                                <a href="{{ site_social_links()->linkedin_url }}" target="_blank" aria-label="LinkedIn"
+                                    title="LinkedIn">
+                                    <i class="ti-linkedin"></i>
+                                </a>
+                            @endif
+                            @if (site_social_links()->youtube_url)
+                                <a href="{{ site_social_links()->youtube_url }}" target="_blank" aria-label="YouTube"
+                                    title="Youtube">
+                                    <i class="ti-youtube"></i>
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>

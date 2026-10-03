@@ -23,9 +23,11 @@
     </script>
 
     <!-- CSS -->
-    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('front/bootstrap/bootstrap.css') }}" />
+    {{--
+    <link rel="stylesheet" type="text/css" href="{{ asset('front/bootstrap/bootstrap.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('front/bootstrap/bootstrap.js') }}" /> --}}
-    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('front/bootstrap/styles/style.css') }}" /> --}}
+    {{--
+    <link rel="stylesheet" type="text/css" href="{{ asset('front/bootstrap/styles/style.css') }}" /> --}}
 
     <!-- frontend css -->
     <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
@@ -122,10 +124,35 @@
                     {{ isset(settings()->site_meta_description) ? settings()->site_meta_description : '' }}
                 </p>
                 <div class="social-links" style="margin-top: 20px;">
-                    <a href="#" aria-label="Twitter">𝕏</a>
-                    <a href="#" aria-label="GitHub">⌨</a>
-                    <a href="#" aria-label="LinkedIn">in</a>
-                    <a href="#" aria-label="RSS">⊕</a>
+                    @if (site_social_links()->x_url)
+                        <a href="{{ site_social_links()->x_url }}" target="_blank" aria-label="X" title="X (Twitter)">
+                            𝕏
+                        </a>
+                    @endif
+                    @if (site_social_links()->facebook_url)
+                        <a href="{{ site_social_links()->facebook_url }}" target="_blank" aria-label="Facebook"
+                            title="Facebook">
+                            <i class="ti-facebook"></i>
+                        </a>
+                    @endif
+                    @if (site_social_links()->instagram_url)
+                        <a href="{{ site_social_links()->instagram_url }}" target="_blank" aria-label="Instagram"
+                            title="Instagram">
+                            <i class="ti-instagram"></i>
+                        </a>
+                    @endif
+                    @if (site_social_links()->linkedin_url)
+                        <a href="{{ site_social_links()->linkedin_url }}" target="_blank" aria-label="LinkedIn"
+                            title="LinkedIn">
+                            <i class="ti-linkedin"></i>
+                        </a>
+                    @endif
+                    @if (site_social_links()->youtube_url)
+                        <a href="{{ site_social_links()->youtube_url }}" target="_blank" aria-label="YouTube"
+                            title="Youtube">
+                            <i class="ti-youtube"></i>
+                        </a>
+                    @endif
                 </div>
             </div>
             <div>
@@ -134,7 +161,7 @@
                     <li><a href="/">Home</a></li>
                     <li><a href="{{ route('blog.posts') }}">All Articles</a></li>
                     <li><a href="about.html">About Us</a></li>
-                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="{{ route('blog.contact') }}">Contact</a></li>
                 </ul>
             </div>
             <div>

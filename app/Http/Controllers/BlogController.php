@@ -389,6 +389,9 @@ class BlogController extends Controller
         //Fetch single post by slug
         $post = POST::where('slug', $slug)->firstOrFail();
 
+        //Increment the post views count
+        $post->increment('number_of_views');
+
         //Get related post
         $relatedPosts = Post::where('category', $post->category)
             ->where('id', '!=', $post->id)

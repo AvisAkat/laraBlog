@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Category;
+use App\Models\FooterCategory;
 use App\Models\GeneralSettings;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -27,6 +29,24 @@ if (! function_exists('site_social_links')) {
         }
     }
 }
+
+/**
+ * Footer Categories
+ */
+if (! function_exists('footer_categories')) {
+    function footer_categories()
+    {
+        $categories = FooterCategory::take(1)->first();
+        if ( !is_null($categories) ) {
+            return $categories;
+        }
+    }
+
+    function category($id) {
+        return Category::findOrFail($id);
+    }
+}
+
 
 /**
  * DATE FORMAT eg. March 15, 2024

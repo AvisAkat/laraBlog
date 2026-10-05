@@ -3,6 +3,8 @@
 use Livewire\Component;
 use App\Models\GeneralSettings;
 use App\Models\SiteSocialLink;
+use App\Models\Category;
+use App\Models\FooterCategory;
 
 new class extends Component {
 
@@ -17,10 +19,18 @@ new class extends Component {
     //Site Social Links form properties
     public $facebook_url, $instagram_url, $linkedin_url, $x_url, $youtube_url;
 
+    //Footer Categories form properties
+    public $category1, $category2, $category3, $category4;
+
 
     public function selectTab($tab)
     {
         $this->tab = $tab;
+    }
+
+    public function all_categories()
+    {
+        return Category::all();
     }
 
     //GENERAL SETTINGS
@@ -89,6 +99,44 @@ new class extends Component {
 
     }
 
+    //FOOTER CATEGORIES
+    public function updateFooterCategories()
+    {
+        $this->validate([
+            'category1' => 'nullable|exists:categories,id',
+            'category2' => 'nullable|exists:categories,id',
+            'category3' => 'nullable|exists:categories,id',
+            'category4' => 'nullable|exists:categories,id'
+        ], [
+            'category1.exists' => 'The Category selected is invalid',
+            'category2.exists' => 'The Category selected is invalid',
+            'category3.exists' => 'The Category selected is invalid',
+            'category4.exists' => 'The Category selected is invalid'
+        ]);
+
+        $footer_categories = FooterCategory::take(1)->first();
+
+        $data = array(
+            'category1' => $this->category1,
+            'category2' => $this->category2,
+            'category3' => $this->category3,
+            'category4' => $this->category4
+        );
+
+        if (!is_null($footer_categories)) {
+            $query = $footer_categories->update($data);
+        } else {
+            $query = FooterCategory::create($data);
+        }
+
+        if ($query) {
+            $this->dispatch('showAlert', ['type' => 'success', 'message' => 'The categories on the footer has been updated successfuly!']);
+        } else {
+            $this->dispatch('showAlert', ['type' => 'error', 'message' => 'Something went wrong. Please try again.']);
+
+        }
+    }
+
     public function mount()
     {
         $this->tab = Request('tab') ? Request('tab') : $this->tabname;
@@ -98,6 +146,9 @@ new class extends Component {
 
         //Populate Site Social Links
         $site_social_links = SiteSocialLink::take(1)->first();
+
+        //Populate Footer Categories
+        $footer_categories = FooterCategory::take(1)->first();
 
         if (!is_null($settings)) {
             $this->site_title = $settings->site_title;
@@ -113,6 +164,13 @@ new class extends Component {
             $this->instagram_url = $site_social_links->instagram_url;
             $this->linkedin_url = $site_social_links->linkedin_url;
             $this->youtube_url = $site_social_links->youtube_url;
+        }
+
+        if(!is_null($footer_categories)) {
+            $this->category1 = $footer_categories->category1;
+            $this->category2 = $footer_categories->category2;
+            $this->category3 = $footer_categories->category3;
+            $this->category4 = $footer_categories->category4;
         }
     }
 };
@@ -138,6 +196,13 @@ new class extends Component {
                 <a wire:click="selectTab('social_links')" class="nav-link {{ $tab == 'social_links' ? 'active' : ''  }}"
                     data-toggle="tab" href="#social_links" role="tab" aria-selected="false">
                     Social Links
+                </a>
+            </li>
+            <li class="nav-item">
+                <a wire:click="selectTab('footer_categories')"
+                    class="nav-link {{ $tab == 'footer_categories' ? 'active' : ''  }}" data-toggle="tab"
+                    href="#footer_categories" role="tab" aria-selected="false">
+                    Footer Categories
                 </a>
             </li>
         </ul>
@@ -304,6 +369,78 @@ new class extends Component {
                         </div>
                         <div class="text-center mt-4">
                             <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="tab-pane fade {{ $tab == 'footer_categories' ? 'active show' : '' }}" id="footer_categories"
+                role="tabpanel">
+                <div class="pd-20">
+                    <form wire:submit="updateFooterCategories()">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for=""><b>First Category</b>:</label>
+                                    <select wire:model="category1" id="category1" class="form-control">
+                                        <option value="">Select Category</option>
+                                        @foreach ($this->all_categories() as $category)
+                                            <option value="{{ $category->id }}" {{ $category->id == $this->category1 ? 'selected' : '' }}>{{ $category->name }}
+                                                ({{ $category->posts->count() }})</option>
+                                        @endforeach
+                                    </select>
+                                    @error('category1')
+                                        <span class="text-danger ml-1">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for=""><b>Second Category</b>:</label>
+                                    <select wire:model="category2" id="category2" class="form-control">
+                                        <option value="">Select Category</option>
+                                        @foreach ($this->all_categories() as $category)
+                                            <option value="{{ $category->id }}" {{ $category->id == $this->category2 ? 'selected' : '' }}>{{ $category->name }}
+                                                ({{ $category->posts->count() }})</option>
+                                        @endforeach
+                                    </select>
+                                    @error('category2')
+                                        <span class="text-danger ml-1">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for=""><b>Third Category</b>:</label>
+                                    <select wire:model="category3" id="category3" class="form-control">
+                                        <option value="">Select Category</option>
+                                        @foreach ($this->all_categories() as $category)
+                                            <option value="{{ $category->id }}" {{ $category->id == $this->category3 ? 'selected' : '' }}>{{ $category->name }}
+                                                ({{ $category->posts->count() }})</option>
+                                        @endforeach
+                                    </select>
+                                    @error('category3')
+                                        <span class="text-danger ml-1">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for=""><b>Fourth Category</b>:</label>
+                                    <select wire:model="category4" id="category4" class="form-control">
+                                        <option value="">Select Category</option>
+                                        @foreach ($this->all_categories() as $category)
+                                            <option value="{{ $category->id }}" {{ $category->id == $this->category4 ? 'selected' : '' }}>{{ $category->name }}
+                                                ({{ $category->posts->count() }})</option>
+                                        @endforeach
+                                    </select>
+                                    @error('category4')
+                                        <span class="text-danger ml-1">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="text-center col-md-12 mt-4">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
                         </div>
                     </form>
                 </div>

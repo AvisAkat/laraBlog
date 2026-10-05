@@ -22,13 +22,6 @@
         })();
     </script>
 
-    <!-- CSS -->
-    {{--
-    <link rel="stylesheet" type="text/css" href="{{ asset('front/bootstrap/bootstrap.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('front/bootstrap/bootstrap.js') }}" /> --}}
-    {{--
-    <link rel="stylesheet" type="text/css" href="{{ asset('front/bootstrap/styles/style.css') }}" /> --}}
-
     <!-- frontend css -->
     <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
     @stack('stylesheets')
@@ -57,10 +50,6 @@
                     class="{{ Route::Is('blog.posts') || Route::Is('blog.category_posts') ? 'active' : '' }}">Articles</a>
                 <a href="about.html">About Us</a>
                 <a href="{{ route('blog.contact') }}">Contact</a>
-                {{-- <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-                    <span class="theme-toggle-label"></span>
-                </button> --}}
-
             </nav>
 
             <div class="user-settings">
@@ -167,10 +156,33 @@
             <div>
                 <h4>Categories</h4>
                 <ul class="footer-links">
-                    <li><a href="#">Technology</a></li>
-                    <li><a href="#">Design</a></li>
-                    <li><a href="#">Business</a></li>
-                    <li><a href="#">Science</a></li>
+                    @if (footer_categories())
+                        @if (footer_categories()->category1 ?? '')
+                            <li><a
+                                    href="{{ route('blog.category_posts', category(footer_categories()->category1)->slug) }}">{{ category(footer_categories()->category1)->name  }}</a>
+                            </li>
+                        @endif
+                        @if (footer_categories()->category2 ?? '')
+                            <li><a
+                                    href="{{ route('blog.category_posts', category(footer_categories()->category2)->slug) }}">{{ category(footer_categories()->category2)->name  }}</a>
+                            </li>
+                        @endif
+                        @if (footer_categories()->category3 ?? '')
+                            <li><a
+                                    href="{{ route('blog.category_posts', category(footer_categories()->category3)->slug) }}">{{ category(footer_categories()->category3)->name  }}</a>
+                            </li>
+                        @endif
+                        @if (footer_categories()->category4 ?? '')
+                            <li><a
+                                    href="{{ route('blog.category_posts', category(footer_categories()->category4)->slug) }}">{{ category(footer_categories()->category4)->name  }}</a>
+                            </li>
+                        @endif
+                    @else
+                        <li><a href="#">Technology</a></li>
+                        <li><a href="#">Cars</a></li>
+                        <li><a href="#">Sports</a></li>
+                        <li><a href="#">Business</a></li>
+                    @endif
                 </ul>
             </div>
             <div>

@@ -113,30 +113,30 @@
                     {{ isset(settings()->site_meta_description) ? settings()->site_meta_description : '' }}
                 </p>
                 <div class="social-links" style="margin-top: 20px;">
-                    @if (site_social_links()->x_url)
+                    @if (site_social_links()->x_url ?? '')
                         <a href="{{ site_social_links()->x_url }}" target="_blank" aria-label="X" title="X (Twitter)">
                             𝕏
                         </a>
                     @endif
-                    @if (site_social_links()->facebook_url)
+                    @if (site_social_links()->facebook_url ?? '')
                         <a href="{{ site_social_links()->facebook_url }}" target="_blank" aria-label="Facebook"
                             title="Facebook">
                             <i class="ti-facebook"></i>
                         </a>
                     @endif
-                    @if (site_social_links()->instagram_url)
+                    @if (site_social_links()->instagram_url ?? '')
                         <a href="{{ site_social_links()->instagram_url }}" target="_blank" aria-label="Instagram"
                             title="Instagram">
                             <i class="ti-instagram"></i>
                         </a>
                     @endif
-                    @if (site_social_links()->linkedin_url)
+                    @if (site_social_links()->linkedin_url ?? '')
                         <a href="{{ site_social_links()->linkedin_url }}" target="_blank" aria-label="LinkedIn"
                             title="LinkedIn">
                             <i class="ti-linkedin"></i>
                         </a>
                     @endif
-                    @if (site_social_links()->youtube_url)
+                    @if (site_social_links()->youtube_url ?? '')
                         <a href="{{ site_social_links()->youtube_url }}" target="_blank" aria-label="YouTube"
                             title="Youtube">
                             <i class="ti-youtube"></i>

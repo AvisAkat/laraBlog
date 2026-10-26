@@ -193,7 +193,7 @@
             </div>
             <div class="faq-grid">
                 <div class="faq-item">
-                    <h4><span>Q.</span> How can I write for ByteBlog?</h4>
+                    <h4><span>Q.</span> How can I write for {{ settings()->site_title }}?</h4>
                     <p>We accept guest contributions from experienced writers. Send us your pitch via the contact form with
                         "Guest Post" as the subject. Include your topic idea, relevant experience, and any samples of your
                         previous work.</p>

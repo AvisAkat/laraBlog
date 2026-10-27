@@ -31,7 +31,7 @@
                         What started as a small team of tech enthusiasts sharing their discoveries has grown into a thriving
                         community of writers, designers, developers, and curious minds.</p>
                     <p>We believe that great ideas deserve great platforms. Every article, every tutorial, and every opinion
-                        piece on ByteBlog goes through careful curation to ensure it provides real value to our readers.</p>
+                        piece on {{ settings()->site_title }} goes through careful curation to ensure it provides real value to our readers.</p>
                     <p>Today, we're proud to host content from over 200 contributors, serving millions of readers across the
                         globe. But no matter how big we grow, our commitment to quality remains the same.</p>
                 </div>
@@ -69,7 +69,7 @@
         <div class="section">
             <div class="section-header">
                 <h2>Our Core Values</h2>
-                <p>The principles that guide everything we do at ByteBlog</p>
+                <p>The principles that guide everything we do at {{ settings()->site_title }}</p>
             </div>
             <div class="values-grid">
                 <div class="value-card">
@@ -99,7 +99,7 @@
         <div class="section">
             <div class="section-header">
                 <h2>Meet Our Team</h2>
-                <p>The passionate people behind ByteBlog's success</p>
+                <p>The passionate people behind {{ settings()->site_title }}'s success</p>
             </div>
             <div class="team-grid">
                 <div class="team-card">
@@ -169,7 +169,7 @@
             <h2 style="font-size: 2.5rem;font-weight: 700;margin-bottom: 16px;">Want to Join Our Journey?</h2>
             <p
                 style="font-size: 1.1rem;opacity: 0.95;margin-bottom: 32px;max-width: 500px;margin-left: auto;margin-right: auto;">
-                We're always looking for talented writers and creative minds to contribute to ByteBlog.
+                We're always looking for talented writers and creative minds to contribute to {{ settings()->site_title }}.
             </p>
             <div class="cta-buttons">
                 <a href="{{ route('blog.contact') }}" class="cta-btn cta-btn-primary">Get in Touch</a>

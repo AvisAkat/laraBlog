@@ -78,38 +78,40 @@
                     </div>
 
                     <div class="social-section">
+                        @if (!is_null(site_social_links()))
                         <h4>Follow Us</h4>
                         <div class="social-links">
-                            @if (site_social_links()->x_url)
+                            @if (site_social_links()->x_url ?? '')
                                 <a href="{{ site_social_links()->x_url }}" target="_blank" aria-label="X" title="X (Twitter)">
                                     𝕏
                                 </a>
                             @endif
-                            @if (site_social_links()->facebook_url)
+                            @if (site_social_links()->facebook_url ?? '')
                                 <a href="{{ site_social_links()->facebook_url }}" target="_blank" aria-label="Facebook"
                                     title="Facebook">
                                     <i class="ti-facebook"></i>
                                 </a>
                             @endif
-                            @if (site_social_links()->instagram_url)
+                            @if (site_social_links()->instagram_url ?? '')
                                 <a href="{{ site_social_links()->instagram_url }}" target="_blank" aria-label="Instagram"
                                     title="Instagram">
                                     <i class="ti-instagram"></i>
                                 </a>
                             @endif
-                            @if (site_social_links()->linkedin_url)
+                            @if (site_social_links()->linkedin_url ?? '')
                                 <a href="{{ site_social_links()->linkedin_url }}" target="_blank" aria-label="LinkedIn"
                                     title="LinkedIn">
                                     <i class="ti-linkedin"></i>
                                 </a>
                             @endif
-                            @if (site_social_links()->youtube_url)
+                            @if (site_social_links()->youtube_url ?? '')
                                 <a href="{{ site_social_links()->youtube_url }}" target="_blank" aria-label="YouTube"
                                     title="Youtube">
                                     <i class="ti-youtube"></i>
                                 </a>
                             @endif
                         </div>
+                        @endif
                     </div>
                 </div>
 
@@ -191,7 +193,7 @@
             </div>
             <div class="faq-grid">
                 <div class="faq-item">
-                    <h4><span>Q.</span> How can I write for ByteBlog?</h4>
+                    <h4><span>Q.</span> How can I write for {{ settings()->site_title }}?</h4>
                     <p>We accept guest contributions from experienced writers. Send us your pitch via the contact form with
                         "Guest Post" as the subject. Include your topic idea, relevant experience, and any samples of your
                         previous work.</p>

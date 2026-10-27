@@ -48,8 +48,8 @@
                 <a href="/" class="{{ Route::Is('blog.home') ? 'active' : '' }}">Home</a>
                 <a href="{{ route('blog.posts') }}"
                     class="{{ Route::Is('blog.posts') || Route::Is('blog.category_posts') ? 'active' : '' }}">Articles</a>
-                <a href="about.html">About Us</a>
-                <a href="{{ route('blog.contact') }}">Contact</a>
+                <a href="{{ route('blog.about') }}" class="{{ Route::Is('blog.about') ? 'active' : '' }}">About Us</a>
+                <a href="{{ route('blog.contact') }}" class="{{ Route::Is('blog.contact') ? 'active' : '' }}">Contact</a>
             </nav>
 
             <div class="user-settings">
@@ -149,7 +149,7 @@
                 <ul class="footer-links">
                     <li><a href="/">Home</a></li>
                     <li><a href="{{ route('blog.posts') }}">All Articles</a></li>
-                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="{{ route('blog.about') }}">About Us</a></li>
                     <li><a href="{{ route('blog.contact') }}">Contact</a></li>
                 </ul>
             </div>
@@ -196,7 +196,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <span>© 2026 {{ settings()->site_title }}. All rights reserved.</span>
+            <span>© {{ now()->year }} {{ settings()->site_title }}. All rights reserved.</span>
             <span>Designed by AvisAkat</span>
         </div>
     </footer>

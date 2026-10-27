@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 new class extends Component {
+    /** @return Builder<Post> */
     protected function postsQuery(): Builder
     {
         return Post::query()->when(
@@ -69,7 +70,7 @@ new class extends Component {
         $this->postsQuery()
             ->whereBetween('created_at', [$start, $end])
             ->get(['created_at', 'visibility'])
-            ->each(function (Post $post) use ($start, &$published, &$drafts) {
+            ->each(function ($post) use ($start, &$published, &$drafts) {
                 $index = (($post->created_at->year - $start->year) * 12)
                     + ($post->created_at->month - $start->month);
 

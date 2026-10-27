@@ -196,7 +196,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <span>© 2026 {{ settings()->site_title }}. All rights reserved.</span>
+            <span>© {{ now()->year }} {{ settings()->site_title }}. All rights reserved.</span>
             <span>Designed by AvisAkat</span>
         </div>
     </footer>

@@ -153,6 +153,9 @@
         </div>
     </section>
 
+    <!-- ===== STATS ===== -->
+    @livewire('aboutus-stats')
+
     <!-- ===== NEWSLETTER ===== -->
     <section class="section">
         <div class="newsletter">

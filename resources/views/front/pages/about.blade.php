@@ -41,28 +41,7 @@
 
 
     <!-- Stats Section -->
-    <section class="stats-section">
-        <div class="section">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number">2M+</div>
-                    <div class="stat-label">Monthly Readers</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">500+</div>
-                    <div class="stat-label">Published Articles</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">200+</div>
-                    <div class="stat-label">Expert Writers</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">50+</div>
-                    <div class="stat-label">Countries Reached</div>
-                </div>
-            </div>
-        </div>
-    </section>
+    @livewire('aboutus-stats')
 
     <!-- Values Section -->
     <section class="values-section">

@@ -22,7 +22,9 @@
         <div class="section">
             <div class="about-grid">
                 <div class="about-image">
-                    <div class="about-image-inner">📝</div>
+                    <img class="about-image-inner"
+                        src="{{ asset('images/posts/1777458171_photo-1519389950473-47ba0277781c.jpg') }}"
+                        alt="Team collaborating around laptops and sharing ideas">
                 </div>
                 <div class="about-content">
                     <h2>Our Story</h2>
@@ -52,19 +54,19 @@
             </div>
             <div class="values-grid">
                 <div class="value-card">
-                    <div class="value-icon">✨</div>
+                    <div class="value-icon"><i class="icon-copy ion-ios-star" aria-hidden="true"></i></div>
                     <h3>Quality First</h3>
                     <p>We never compromise on quality. Every piece of content is carefully researched, well-written, and
                         edited to perfection before publication.</p>
                 </div>
                 <div class="value-card">
-                    <div class="value-icon">🎯</div>
+                    <div class="value-icon"><i class="icon-copy ion-ios-book" aria-hidden="true"></i></div>
                     <h3>Reader Focused</h3>
                     <p>Our readers are our priority. We create content that educates, inspires, and provides real solutions
                         to real problems.</p>
                 </div>
                 <div class="value-card">
-                    <div class="value-icon">🌍</div>
+                    <div class="value-icon"><i class="icon-copy ion-ios-world" aria-hidden="true"></i></div>
                     <h3>Accessibility</h3>
                     <p>Knowledge should be free and accessible. We work to make complex topics understandable for everyone,
                         regardless of background.</p>
@@ -83,7 +85,7 @@
             <div class="team-grid">
                 <div class="team-card">
                     <div class="team-image">
-                        <div class="team-avatar">👩‍💼</div>
+                        <img class="team-avatar" src="{{ asset('back/src/images/photo1.jpg') }}" alt="Sarah Chen">
                     </div>
                     <div class="team-info">
                         <h3>Sarah Chen</h3>
@@ -97,7 +99,7 @@
                 </div>
                 <div class="team-card">
                     <div class="team-image">
-                        <div class="team-avatar">👨‍💻</div>
+                        <img class="team-avatar" src="{{ asset('back/src/images/photo2.jpg') }}" alt="Marcus Rivera">
                     </div>
                     <div class="team-info">
                         <h3>Marcus Rivera</h3>
@@ -111,7 +113,7 @@
                 </div>
                 <div class="team-card">
                     <div class="team-image">
-                        <div class="team-avatar">👩‍🎨</div>
+                        <img class="team-avatar" src="{{ asset('back/src/images/photo3.jpg') }}" alt="Emily Watson">
                     </div>
                     <div class="team-info">
                         <h3>Emily Watson</h3>
@@ -125,7 +127,7 @@
                 </div>
                 <div class="team-card">
                     <div class="team-image">
-                        <div class="team-avatar">👨‍🎓</div>
+                        <img class="team-avatar" src="{{ asset('back/src/images/photo4.jpg') }}" alt="James Park">
                     </div>
                     <div class="team-info">
                         <h3>James Park</h3>

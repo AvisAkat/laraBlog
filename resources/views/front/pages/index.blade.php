@@ -202,4 +202,128 @@
         </div>
     </section>
 
+    <!-- ===== RANDOM ARTICLES ===== -->
+    @php($randomArticles = collect($latestPost ?? [])->shuffle())
+    @if ($randomArticles->isNotEmpty())
+        <section class="section random-articles-section" aria-labelledby="random-articles-title">
+            <div class="random-articles-heading">
+                <div class="section-header">
+                    <h2 id="random-articles-title">A Little More to Explore</h2>
+                    <p>Discover something new from our stories</p>
+                    <div class="line"></div>
+                </div>
+                @if ($randomArticles->count() > 3)
+                    <div class="random-articles-controls" aria-label="Article carousel controls">
+                        <button type="button" class="random-articles-control" data-random-articles-prev
+                            aria-label="Show previous articles" disabled>
+                            <i class="icon-copy ion-ios-arrow-back" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="random-articles-control" data-random-articles-next
+                            aria-label="Show next articles">
+                            <i class="icon-copy ion-ios-arrow-forward" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                @endif
+            </div>
+            <div class="random-articles-viewport">
+                <div class="random-articles-track" data-random-articles role="region"
+                    aria-label="Random articles carousel" tabindex="0">
+                    @foreach ($randomArticles as $post)
+                        <article class="random-article-card">
+                            <a class="random-article-image" href="{{ route('blog.read_post', $post->slug) }}">
+                                <img src="{{ asset('images/posts/' . $post->featured_image) }}"
+                                    alt="{{ $post->title }}" loading="lazy">
+                            </a>
+                            <div class="random-article-body">
+                                <span class="popular-month-category">
+                                    {{ $post->post_category->name ?? 'Article' }}
+                                </span>
+                                <h3>
+                                    <a href="{{ route('blog.read_post', $post->slug) }}">{{ $post->title }}</a>
+                                </h3>
+                                <p>{!! Str::ucfirst(strip_words($post->content, 20)) !!}</p>
+                                <a class="popular-month-link" href="{{ route('blog.read_post', $post->slug) }}">
+                                    Read Article <span aria-hidden="true">→</span>
+                                </a>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
 @endsection
+
+@push('scripts')
+    <script>
+        document.querySelectorAll('[data-random-articles]').forEach((carousel) => {
+            const section = carousel.closest('.random-articles-section');
+            const previousButton = section.querySelector('[data-random-articles-prev]');
+            const nextButton = section.querySelector('[data-random-articles-next]');
+            const cards = Array.from(carousel.children);
+            let currentIndex = 0;
+            let autoplay;
+
+            const getVisibleCards = () => {
+                if (window.matchMedia('(max-width: 640px)').matches) {
+                    return 1;
+                }
+                return window.matchMedia('(max-width: 900px)').matches ? 2 : 3;
+            };
+
+            const getMaxIndex = () => Math.max(0, cards.length - getVisibleCards());
+
+            const updateCarousel = () => {
+                const gap = parseFloat(window.getComputedStyle(carousel).columnGap) || 0;
+                const cardWidth = cards[0].getBoundingClientRect().width;
+                const maxIndex = getMaxIndex();
+                currentIndex = Math.min(currentIndex, maxIndex);
+                carousel.style.transform = `translateX(-${currentIndex * (cardWidth + gap)}px)`;
+
+                if (previousButton && nextButton) {
+                    previousButton.disabled = currentIndex === 0;
+                    nextButton.disabled = currentIndex === maxIndex;
+                }
+            };
+
+            const startAutoplay = () => {
+                window.clearInterval(autoplay);
+                if (getMaxIndex() > 0 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    autoplay = window.setInterval(() => {
+                        currentIndex = currentIndex >= getMaxIndex() ? 0 : currentIndex + 1;
+                        updateCarousel();
+                    }, 5000);
+                }
+            };
+
+            if (previousButton && nextButton) {
+                previousButton.addEventListener('click', () => {
+                    currentIndex = Math.max(0, currentIndex - 1);
+                    updateCarousel();
+                    startAutoplay();
+                });
+                nextButton.addEventListener('click', () => {
+                    currentIndex = Math.min(getMaxIndex(), currentIndex + 1);
+                    updateCarousel();
+                    startAutoplay();
+                });
+            }
+
+            section.addEventListener('mouseenter', () => window.clearInterval(autoplay));
+            section.addEventListener('mouseleave', startAutoplay);
+            section.addEventListener('focusin', () => window.clearInterval(autoplay));
+            section.addEventListener('focusout', (event) => {
+                if (!section.contains(event.relatedTarget)) {
+                    startAutoplay();
+                }
+            });
+            window.addEventListener('resize', () => {
+                updateCarousel();
+                startAutoplay();
+            });
+            updateCarousel();
+            startAutoplay();
+        });
+    </script>
+@endpush

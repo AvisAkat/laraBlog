@@ -45,7 +45,7 @@
                     <div class="info-items">
                         @if (settings()->site_email)
                             <div class="info-item">
-                                <div class="info-icon">📧</div>
+                                <div class="info-icon"><i class="icon-copy ion-ios-email" aria-hidden="true"></i></div>
                                 <div class="info-content">
                                     <h4>Email Us</h4>
                                     <p><a href="mailto:{{ settings()->site_email }}">{{ settings()->site_email }}</a></p>
@@ -53,7 +53,7 @@
                             </div>
                         @endif
                         <div class="info-item">
-                            <div class="info-icon">📍</div>
+                            <div class="info-icon"><i class="icon-copy ion-ios-location" aria-hidden="true"></i></div>
                             <div class="info-content">
                                 <h4>Visit Us</h4>
                                 <p>East Legon, Greater Accra</p>
@@ -61,7 +61,7 @@
                         </div>
                         @if (settings()->site_phone)
                             <div class="info-item">
-                                <div class="info-icon">📞</div>
+                                <div class="info-icon"><i class="icon-copy ion-ios-telephone" aria-hidden="true"></i></div>
                                 <div class="info-content">
                                     <h4>Call Us</h4>
                                     <p><a href="tel:+14155551234">{{ settings()->site_phone }}</a></p>
@@ -69,7 +69,7 @@
                             </div>
                         @endif
                         <div class="info-item">
-                            <div class="info-icon">⏰</div>
+                            <div class="info-icon"><i class="icon-copy ion-ios-clock" aria-hidden="true"></i></div>
                             <div class="info-content">
                                 <h4>Working Hours</h4>
                                 <p>Monday - Friday: 9am - 6pm PST<br>Saturday - Sunday: Closed</p>
@@ -220,12 +220,17 @@
     <!-- Map Section -->
     <section class="map-section">
         <div class="section">
-            <div class="map-placeholder">
-                <div class="content">
-                    <div class="emoji">🗺️</div>
-                    <h3>Find Us Here</h3>
-                    <p>East Legon. Greater Accra, Ghana</p>
-                </div>
+            <div class="map-frame">
+                <iframe
+                    title="Map showing a location in Madina, Greater Accra, Ghana"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=-0.185%2C5.665%2C-0.145%2C5.700&layer=mapnik&marker=5.682%2C-0.165"
+                    loading="lazy"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="map-location">
+                <h3>Find Us Here</h3>
+                <p>Madina, Greater Accra, Ghana</p>
             </div>
         </div>
     </section>

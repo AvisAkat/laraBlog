@@ -78,7 +78,7 @@
     </section>
 
     <!-- ===== POPULAR THIS MONTH ===== -->
-    @if (!empty($latestPost) && $latestPost->isNotEmpty())
+    @if (!empty($popularPosts) && $popularPosts->isNotEmpty())
         <section class="section popular-month-section">
             <div class="section-header">
                 <h2>Popular This Month</h2>
@@ -87,7 +87,7 @@
             </div>
 
             <div class="popular-month-grid">
-                @foreach ($latestPost->take(3) as $post)
+                @foreach ($popularPosts as $post)
                     <article class="popular-month-card">
                         <a class="popular-month-image" href="{{ route('blog.read_post', $post->slug) }}">
                             <img src="{{ asset('images/posts/' . $post->featured_image) }}" alt="{{ $post->title }}">
@@ -203,8 +203,8 @@
     </section>
 
     <!-- ===== RANDOM ARTICLES ===== -->
-    @php($randomArticles = collect($latestPost ?? [])->shuffle())
-    @if ($randomArticles->isNotEmpty())
+    {{-- @php($randomArticles = collect($randomPosts ?? [])->shuffle()) --}}
+    @if ($randomPosts->isNotEmpty())
         <section class="section random-articles-section" aria-labelledby="random-articles-title">
             <div class="random-articles-heading">
                 <div class="section-header">
@@ -212,7 +212,7 @@
                     <p>Discover something new from our stories</p>
                     <div class="line"></div>
                 </div>
-                @if ($randomArticles->count() > 3)
+                @if ($randomPosts->count() > 3)
                     <div class="random-articles-controls" aria-label="Article carousel controls">
                         <button type="button" class="random-articles-control" data-random-articles-prev
                             aria-label="Show previous articles" disabled>
@@ -228,7 +228,7 @@
             <div class="random-articles-viewport">
                 <div class="random-articles-track" data-random-articles role="region"
                     aria-label="Random articles carousel" tabindex="0">
-                    @foreach ($randomArticles as $post)
+                    @foreach ($randomPosts as $post)
                         <article class="random-article-card">
                             <a class="random-article-image" href="{{ route('blog.read_post', $post->slug) }}">
                                 <img src="{{ asset('images/posts/' . $post->featured_image) }}"

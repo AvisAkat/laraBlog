@@ -93,10 +93,23 @@ class BlogController extends Controller
             ->first();
 
         // Get the latest post
-        $latest_post = Post::where('is_featured', false)
+        $latest_posts = Post::where('is_featured', false)
             ->where('visibility', 1)
             ->limit(6)
             ->orderByDesc('created_at')
+            ->get();
+
+        // Get random post
+        $random_posts = Post::where('is_featured', false)
+            ->where('visibility', 1)
+            ->inRandomOrder()
+            ->limit(9)
+            ->get();
+
+        // Get popular posts
+        $popular_posts = Post::where('visibility', 1)
+            ->limit(3)
+            ->orderByDesc('number_of_views')
             ->get();
 
         // Get Post Categories
@@ -105,8 +118,10 @@ class BlogController extends Controller
         $data = [
             'pageTitle' => $title,
             'featuredPost' => $featured_post,
-            'latestPost' => $latest_post,
+            'latestPost' => $latest_posts,
             'postCategories' => $post_categories,
+            'popularPosts' => $popular_posts,
+            'randomPosts' => $random_posts
         ];
 
         return view('front.pages.index', $data);

@@ -77,6 +77,40 @@
         @endif
     </section>
 
+    <!-- ===== POPULAR THIS MONTH ===== -->
+    @if (!empty($latestPost) && $latestPost->isNotEmpty())
+        <section class="section popular-month-section">
+            <div class="section-header">
+                <h2>Popular This Month</h2>
+                <p>Reader favorites and stories worth discovering</p>
+                <div class="line"></div>
+            </div>
+
+            <div class="popular-month-grid">
+                @foreach ($latestPost->take(3) as $post)
+                    <article class="popular-month-card">
+                        <a class="popular-month-image" href="{{ route('blog.read_post', $post->slug) }}">
+                            <img src="{{ asset('images/posts/' . $post->featured_image) }}" alt="{{ $post->title }}">
+                            <span class="popular-month-rank">#{{ $loop->iteration }}</span>
+                        </a>
+                        <div class="popular-month-body">
+                            <span class="popular-month-category">
+                                {{ $post->post_category->name ?? 'Article' }}
+                            </span>
+                            <h3>
+                                <a href="{{ route('blog.read_post', $post->slug) }}">{{ $post->title }}</a>
+                            </h3>
+                            <p>{!! Str::ucfirst(strip_words($post->content, 20)) !!}</p>
+                            <a class="popular-month-link" href="{{ route('blog.read_post', $post->slug) }}">
+                                Read Article <span aria-hidden="true">→</span>
+                            </a>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
     <!-- ===== LATEST ARTICLES ===== -->
     <section class="section">
         <div class="section-header">

@@ -911,6 +911,94 @@ a.close.disabled {
     border-color: var(--primary);
 }
 
+.popular-month-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+}
+
+.popular-month-card {
+    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.popular-month-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.popular-month-image {
+    display: block;
+    position: relative;
+    height: 210px;
+    overflow: hidden;
+}
+
+.popular-month-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.popular-month-card:hover .popular-month-image img {
+    transform: scale(1.04);
+}
+
+.popular-month-rank {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    display: grid;
+    width: 40px;
+    height: 40px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--gradient);
+    color: #fff;
+    font-weight: 700;
+}
+
+.popular-month-body {
+    padding: 22px;
+}
+
+.popular-month-category {
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.popular-month-body h3 {
+    margin: 10px 0;
+    font-size: 1.15rem;
+    line-height: 1.4;
+}
+
+.popular-month-body h3 a {
+    color: var(--text-primary);
+}
+
+.popular-month-body p {
+    margin-bottom: 18px;
+    color: var(--text-muted);
+}
+
+.popular-month-link {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.popular-month-link span {
+    margin-left: 4px;
+}
+
 .articles-grid-home .article-card-img {
     width: 100%;
     height: 220px;
@@ -1377,6 +1465,10 @@ a.close.disabled {
     .articles-grid-home {
         grid-template-columns: 1fr;
     }
+
+    .popular-month-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 640px) {
@@ -1412,6 +1504,10 @@ a.close.disabled {
 
     .featured-card-body {
         padding: 28px 24px;
+    }
+
+    .popular-month-grid {
+        grid-template-columns: 1fr;
     }
 }
 

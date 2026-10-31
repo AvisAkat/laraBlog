@@ -167,7 +167,9 @@
                             <span class="popular-number">{{ $loop->iteration }}</span>
                             <div>
                                 <h4><a href="{{ route('blog.read_post', $post->slug) }}">{{ $post->title }}</a></h4>
-                                <span>12.4k views</span>
+                                <span>
+                                    {{ $post->number_of_views }} views
+                                </span>
                             </div>
                         </div>
                     @endforeach

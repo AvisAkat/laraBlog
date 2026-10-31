@@ -185,6 +185,7 @@ class BlogController extends Controller
 
         // Get Popular Posts
         $popular_posts = Post::where('visibility', 1)
+            ->orderByDesc('number_of_views')
             ->limit(5)
             ->get();
 
